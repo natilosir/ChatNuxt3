@@ -1,60 +1,97 @@
 <template>
-  <div class="light-style layout-wide customizer-hide" dir="ltr" data-theme="theme-default">
-    <div class="authentication-wrapper authentication-cover">
-      <!-- کپی هدر و لوگو از صفحه لاگین -->
-
-      <div class="authentication-inner row m-0">
-        <!-- بخش تصویر (مشابه صفحه لاگین) -->
-
-        <div class="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg position-relative py-sm-5 px-4 py-4">
-          <div class="w-px-400 mx-auto pt-5 pt-lg-0">
-            <h4 class="mb-2">Forgot Password? 🔒</h4>
-            <p class="mb-4">Enter your email and we'll send you instructions to reset your password</p>
-
-            <form class="mb-3" @submit.prevent="handleForgotPassword">
-              <div class="form-floating form-floating-outline mb-3">
-                <input
-                  type="email"
-                  class="form-control"
-                  v-model="email"
-                  placeholder="Enter your email"
-                />
-                <label>Email</label>
-              </div>
-
-              <button class="btn btn-primary d-grid w-100">Send Reset Link</button>
-            </form>
-
-            <div class="text-center">
-              <a href="/auth/login" class="d-flex align-items-center justify-content-center">
-                <i class="mdi mdi-chevron-left scaleX-n1-rtl"></i>
-                Back to login
-              </a>
-            </div>
-          </div>
-        </div>
+  <div class="auth-form">
+    <h2>بازیابی رمز عبور <span style="color: #FF5555">🔑</span></h2>
+    <p>اطلاعات حساب خود را برای بازیابی رمز عبور وارد کنید</p>
+    <form @submit.prevent="handleSubmit">
+      <div class="form-group">
+        <input v-model="form.email" type="email" placeholder="ایمیل شما" required>
       </div>
-    </div>
+      <button type="submit" :disabled="loading">
+        {{ loading ? 'در حال ارسال...' : 'ارسال لینک بازیابی' }}
+      </button>
+      <p class="auth-footer">
+        به یاد آوردید؟
+        <NuxtLink to="/login">ورود به حساب</NuxtLink>
+      </p>
+      <p class="auth-footer">
+        حساب ندارید؟
+        <NuxtLink to="/register">ثبت‌نام</NuxtLink>
+      </p>
+    </form>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      email: ''
-    }
-  },
-  methods: {
-    async handleForgotPassword() {
-      try {
-        await this.$axios.post('/api/auth/forgot-password', { email: this.email })
-        this.$toast.success('Reset password link has been sent to your email')
-      } catch (error) {
-        this.$toast.error('Failed to send reset link')
+<script lang="ts" setup>
+import { post } from '~/composables/Post';
+import { ref } from 'vue';
+import { setPageLayout, useRouter } from '#app';
+import Swal from 'sweetalert2';
+
+const router = useRouter();
+const loading = ref(false);
+const form = ref({
+  email: ''
+});
+
+setPageLayout('login');
+
+// تابع برای نمایش پیام‌های خطا
+const showErrorMessages = (errorData: Record<string, string[]>) => {
+  const errorMessages = Object.values(errorData).flat();
+  const firstErrorMessage = errorMessages[0] || 'خطایی رخ داده است';
+
+  Swal.fire({
+    icon: 'error',
+    title: 'خطا',
+    text: firstErrorMessage,
+    confirmButtonText: 'متوجه شدم'
+  });
+};
+
+const handleSubmit = async () => {
+  loading.value = true;
+
+  try {
+    const response = await post('password/forgot', {
+      email: form.value.email
+    });
+
+    await Swal.fire({
+      icon: 'success',
+      title: 'ارسال موفق',
+      text: 'لینک بازیابی رمز عبور به ایمیل شما ارسال شد',
+      confirmButtonText: 'متوجه شدم',
+      timer: 3000
+    });
+
+    await router.push('/login');
+
+  } catch (error) {
+    console.log(error);
+
+    if (error.response?.data) {
+      // اگر خطاهای فیلدها وجود دارد
+      if (typeof error.response.data === 'object' && !Array.isArray(error.response.data)) {
+        showErrorMessages(error.response.data);
+      } else {
+        // برای خطاهای عمومی
+        Swal.fire({
+          icon: 'error',
+          title: 'خطا',
+          text: error.response.data?.message || error.message || 'خطایی در ارسال لینک بازیابی رخ داده است',
+          confirmButtonText: 'متوجه شدم'
+        });
       }
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'خطا',
+        text: error.message || 'خطایی در ارسال لینک بازیابی رخ داده است',
+        confirmButtonText: 'متوجه شدم'
+      });
     }
-  },
-  // head و بقیه کدها مانند صفحه لاگین
-}
+  } finally {
+    loading.value = false;
+  }
+};
 </script>

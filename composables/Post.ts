@@ -1,14 +1,73 @@
-export default async function Post(url: string, data: any): Promise<any> {
-    const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-    };
+/**
+ * دریافت مقدار یک کوکی خاص
+ */
+export function getCookie(name: string): string | null {
+    if (process.client) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+    }
+    return null;
+}
 
-    const response = await fetch('http://localhost/' + url, {
+/**
+ * تنظیم یک کوکی جدید
+ */
+export function setCookie(name: string, value: string, days: number = 30): void {
+    if (process.client) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        const expires = `expires=${date.toUTCString()}`;
+        document.cookie = `${name}=${value}; ${expires}; path=/; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`;
+    }
+}
+
+/**
+ * حذف یک کوکی
+ */
+export function deleteCookie(name: string): void {
+    if (process.client) {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    }
+}
+
+
+/**
+ * ارسال درخواست POST
+ */
+export async function post(url: string, data: any): Promise<any> {
+    const response = await fetch(`http://localhost/${url}`, {
         method: 'POST',
-        headers,
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        },
         body: JSON.stringify(data),
     });
 
-    return await response.json();
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
 
+        throw {
+            status: response.status,
+            data: errorData,
+        };
+    }
+
+    return await response.json();
+}
+
+/**
+ * ارسال درخواست GET
+ */
+export async function get(url: string, params?: Record<string, string>): Promise<any> {
+    const queryString = params ? `?${new URLSearchParams(params)}` : '';
+    const response = await fetch(`http://localhost/${url}${queryString}`, {
+        method: 'GET',
+        credentials: 'include',
+    });
+
+    return await response.json();
 }

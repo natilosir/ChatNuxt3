@@ -2,6 +2,7 @@
     font-family: 'IRANSans';
     src: url('~/assets/litle.ttf') format('truetype');
 }
+
 * {
     font-family: IRANSans;
     margin: 0;
@@ -214,6 +215,7 @@ body {
     border-radius: 0.8rem;
     padding: 1.2rem;
     font-weight: 600;
+    margin-bottom: 17px;
     font-size: 1.1rem;
     text-transform: uppercase;
     color: #F8F8F2;
@@ -381,6 +383,7 @@ body {
     }
 
     .auth-illustration {
+        display: none;
         max-width: 100%;
         margin-top: 2rem;
     }
