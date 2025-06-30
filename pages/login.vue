@@ -43,7 +43,6 @@ const form    = ref({
 const auth = await check();
 
 if ( auth.isLoggedIn === true ) {
-  setPageLayout('chat');
   navigateTo('/');
 }
 
@@ -58,7 +57,6 @@ const handleSubmit = async () => {
     });
 
     if ( response.user.username ) {
-      setPageLayout('chat');
       setCookie('hash', response.user.hash, 365);
       await Swal.fire({
         title: 'ورود موفق',
