@@ -25,19 +25,28 @@
   </div>
 </template>
 <script setup>
-import {post} from '~/composables/Post';
-import {ref} from 'vue';
-import {setPageLayout, useRouter} from '#app';
+import { setPageLayout, useRouter } from '#app';
+import { post } from '~/composables/post.js';
+import { ref } from 'vue';
+
+setPageLayout('login');
+import { check } from '~/utils/check.js';
 import Swal from 'sweetalert2';
 
-const router = useRouter();
+const router  = useRouter();
 const loading = ref(false);
-const form = ref({
+const form    = ref({
   username: '',
   password: '',
 });
 
-setPageLayout('login');
+const auth = await check();
+
+if ( auth.isLoggedIn === true ) {
+  setPageLayout('chat');
+  navigateTo('/');
+}
+
 
 const handleSubmit = async () => {
   loading.value = true;
@@ -48,21 +57,30 @@ const handleSubmit = async () => {
       password: form.value.password
     });
 
-    if (response.token) {
+    if ( response.user.username ) {
+      setPageLayout('chat');
+      setCookie('hash', response.user.hash, 365);
       await Swal.fire({
-        icon: 'success',
         title: 'ورود موفق',
-        text: 'شما با موفقیت وارد شدید!',
-        confirmButtonText: 'ادامه',
-        timer: 3000
+        text: `${ response.user.name } عزیز خوش آمدید `,
+        icon: 'success',
+        position: 'top-end',
+        toast: true,
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        customClass: {
+          popup: 'small-swal'
+        }
       });
-      await router.push('/dashboard');
+      navigateTo('/');
     }
-  } catch ({data, status}) {
+
+  } catch ( { data, status } ) {
 
     Swal.fire({
       icon: 'error',
-      title: ` خطای${status}`,
+      title: ` خطای${ status }`,
       text: data.message,
       confirmButtonText: 'متوجه شدم'
     });

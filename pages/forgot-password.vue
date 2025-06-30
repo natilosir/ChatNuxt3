@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-import { post } from '~/composables/Post';
+import { post } from '~/composables/post';
 import { ref } from 'vue';
 import { setPageLayout, useRouter } from '#app';
 import Swal from 'sweetalert2';

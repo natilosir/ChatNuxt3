@@ -26,7 +26,7 @@
   </div>
 </template>
 <script setup>
-import { post } from '~/composables/Post';
+import { post } from '~/composables/post.ts';
 import { ref } from 'vue';
 import { setPageLayout, useRouter } from '#app';
 import Swal from 'sweetalert2';
@@ -52,12 +52,12 @@ const handleSubmit = async () => {
       password: form.value.password,
       password_confirmation: form.value.password_confirmation
     });
-    console.log(response)
+
     if ( response.user.username ) {
       setCookie('hash', response.user.hash, 365);
 
       await Swal.fire({
-        title: 'ورود موفق',
+        title: 'ثبت نام موفق',
         text: `${ response.user.name } عزیز خوش آمدید `,
         icon: 'success',
         position: 'top-end',
