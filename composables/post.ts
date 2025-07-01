@@ -1,12 +1,19 @@
 /**
  * دریافت مقدار یک کوکی خاص
  */
+// utils/cookies.ts
 export function getCookie(name: string): string | null {
-    if (process.client) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+    // اگر در سمت سرور هستیم، از process.server استفاده می‌کنیم
+    if (process.server) return null;
+
+    // در سمت کلاینت کوکی را می‌خوانیم
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+
+    if (parts.length === 2) {
+        return parts.pop()?.split(';').shift() || null;
     }
+
     return null;
 }
 

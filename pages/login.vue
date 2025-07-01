@@ -19,7 +19,7 @@
       </p>
       <p class="text-center">
         رمز عبور خود را فراموش کرده‌اید؟
-        <NuxtLink to="/">بازیابی رمز</NuxtLink>
+        <NuxtLink to="/forgot-password">بازیابی رمز</NuxtLink>
       </p>
     </form>
   </div>
