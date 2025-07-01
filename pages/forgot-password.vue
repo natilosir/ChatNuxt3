@@ -48,11 +48,12 @@ const showErrorMessages = (errorData: Record<string, string[]>) => {
   });
 };
 
+
 const handleSubmit = async () => {
   loading.value = true;
 
   try {
-    const response = await post('password/forgot', {
+    await post('password/forgot', {
       email: form.value.email
     });
 
