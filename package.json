@@ -11,7 +11,10 @@
   },
   "dependencies": {
     "@nuxtjs/auth-next": "^5.0.0-1667386184.dfbbb54",
+    "@popperjs/core": "^2.11.8",
     "@sidebase/nuxt-auth": "^1.0.0",
+    "bootstrap": "^5.3.7",
+    "bootstrap-icons": "^1.13.1",
     "nuxt": "^3.17.5",
     "sweetalert2": "^11.22.2",
     "vue": "^3.5.17",

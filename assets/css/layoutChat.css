@@ -1,0 +1,82 @@
+@font-face {
+    font-family: 'IRANSans';
+    src: url('~/assets/litle.ttf') format('truetype');
+}
+
+* {
+    font-family: IRANSans !important;
+
+}
+
+.app-container {
+    --primary-color: #6c5ce7;
+    --primary-dark: #5649c0;
+    --secondary-color: #a29bfe;
+    --dark-bg: #1a1a2e;
+    --darker-bg: #16213e;
+    --text-color: #e2e2e2;
+    --text-muted: #b8b8b8;
+    --border-color: #2d3748;
+
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: var(--dark-bg);
+    color: var(--text-color);
+}
+
+.main-content {
+    display: flex;
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.chat-view {
+    flex: 1;
+    overflow: auto;
+    padding: 1rem;
+    background-color: var(--darker-bg);
+}
+
+/* موبایل ویو */
+.mobile-view .main-content {
+    flex-direction: column;
+}
+
+.sidebar-toggle-btn {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 9px 0px 0px 0px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 29px;
+}
+
+/* انیمیشن‌ها */
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+    transition: all 0.3s ease;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+@media (min-width: 768px) {
+    .sidebar-toggle-btn {
+        display: none;
+    }
+}

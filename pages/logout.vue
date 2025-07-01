@@ -5,6 +5,7 @@ import { deleteCookie, post } from '~/composables/post.js';
 const router   = useRouter();
 setPageLayout('login');
 
+
 onMounted(async () => {
   const response = await post('logout');
   if ( response.status === true ) {
