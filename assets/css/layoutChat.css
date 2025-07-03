@@ -9,8 +9,8 @@
 }
 
 .app-container {
-    --primary-color: #6c5ce7;
-    --primary-dark: #5649c0;
+    --primary-color: #4e0c65;
+    --primary-dark: #810369;
     --secondary-color: #a29bfe;
     --dark-bg: #1a1a2e;
     --darker-bg: #16213e;
@@ -46,16 +46,15 @@
 
 .sidebar-toggle-btn {
     position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
+    top: 0.5rem;
+    left: 4.5rem;
     width: 3.5rem;
     height: 3.5rem;
     padding: 9px 0px 0px 0px;
     border-radius: 50%;
-    background: var(--primary-color);
+    background: rgba(255, 255, 255, 0.1);
     color: white;
     border: none;
-    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
     z-index: 1000;
     display: flex;
     align-items: center;

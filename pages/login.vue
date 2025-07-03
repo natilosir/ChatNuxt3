@@ -25,13 +25,13 @@
   </div>
 </template>
 <script setup>
-import { setPageLayout, useRouter } from '#app';
+import { setPageLayout, useCookie, useRouter } from '#app';
 import { post } from '~/composables/post.js';
 import { ref } from 'vue';
-
-setPageLayout('login');
 import { check } from '~/utils/check.js';
 import Swal from 'sweetalert2';
+
+setPageLayout('login');
 
 const router  = useRouter();
 const loading = ref(false);
@@ -57,6 +57,7 @@ const handleSubmit = async () => {
     });
 
     if ( response.user.username ) {
+      setCookie('token', response.token, 365);
       setCookie('hash', response.user.hash, 365);
       await Swal.fire({
         title: 'ورود موفق',

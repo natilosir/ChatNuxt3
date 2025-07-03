@@ -38,7 +38,7 @@
 }
 
 .mobile-view .search-container {
-    margin-top: 11px;
+    margin-top: 7px;
 }
 
 .search-box {
@@ -50,13 +50,14 @@
 
 .search-box i {
     position: absolute;
-    left: 0.8rem;
+    left: 14px;
+    top: 13px;
     color: var(--text-muted);
 }
 
 .search-box input {
     width: 100%;
-    padding: 0.6rem 1rem 0.6rem 2.2rem;
+    padding: 11px 1rem 0.6rem 40px;
     background-color: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border-color);
     border-radius: 0.5rem;
@@ -162,8 +163,7 @@
         top: 0;
         right: 0;
         bottom: 0;
-        width: 85%;
-        max-width: 350px;
+        width: 100%;
         z-index: 999;
         box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
     }

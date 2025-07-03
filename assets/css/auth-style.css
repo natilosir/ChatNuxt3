@@ -5,9 +5,6 @@
 
 * {
     font-family: IRANSans;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
 }
 
 body {
@@ -118,7 +115,8 @@ body {
     max-width: 480px;
     position: relative;
     overflow: hidden;
-    transition: transform 0.4s ease;
+    transition: transform 0.4s ease, box-shadow 2s ease;
+
 }
 
 .auth-form:hover {
@@ -159,6 +157,7 @@ body {
     text-align: center;
     margin-bottom: 2rem;
 }
+
 
 /* Form inputs */
 .form-group {
@@ -210,7 +209,7 @@ body {
 
 /* Submit button */
 .auth-form button {
-    background: linear-gradient(45deg, #BD93F9, #FF79C6); /* گرادیانت نئونی دراکولا */
+    background: linear-gradient(45deg, #8852d5, #8e0a9b);
     border: none;
     border-radius: 0.8rem;
     padding: 1.2rem;
@@ -221,13 +220,15 @@ body {
     color: #F8F8F2;
     width: 100%;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.7s ease;
 }
 
 .auth-form button:hover {
-    background: linear-gradient(45deg, #FF79C6, #BD93F9);
+    background: linear-gradient(45deg, #9861e7, #b811c9);
     transform: translateY(-4px);
     box-shadow: 0 8px 25px rgba(189, 147, 249, 0.7);
+    transition: all 0.7s ease;
+
 }
 
 .auth-form button:disabled {

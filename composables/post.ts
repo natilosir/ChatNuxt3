@@ -1,3 +1,5 @@
+import {useCookie} from "#app";
+
 /**
  * دریافت مقدار یک کوکی خاص
  */
@@ -43,12 +45,14 @@ export function deleteCookie(name: string): void {
  * ارسال درخواست POST
  */
 export async function post(url: string, data: any): Promise<any> {
-    const response = await fetch(`http://localhost/${url}`, {
+
+    const response = await fetch(`http://localhost:8000/api/${url}`, {
         method: 'POST',
         credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
+            'Authorization': 'Bearer ' + useCookie('token').value,
             'X-Requested-With': 'XMLHttpRequest',
         },
         body: JSON.stringify(data),

@@ -10,7 +10,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px;
     margin: 0 auto;
 }
 
@@ -160,11 +159,11 @@
 .logout-btn {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
     background: rgba(255, 255, 255, 0.1);
     border: none;
+    gap: 10px;
     color: white;
-    padding: 0.6rem 1rem;
+    padding: 7px 18px 7px 20px;
     border-radius: 50px;
     cursor: pointer;
     transition: all 0.2s;
@@ -176,6 +175,7 @@
 }
 
 .logout-btn i {
+    margin-top: 10px;
     font-size: 1.1rem;
 }
 

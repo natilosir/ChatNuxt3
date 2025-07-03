@@ -2,17 +2,18 @@ import { useCookie } from '#app';
 import { post } from '~/composables/post.js';
 
 export async function check() {
-    const hash = useCookie('hash');
+    const token = useCookie('token');
 
-    if (!hash.value) {
+    if (!token.value) {
         return { isLoggedIn: false, user: null };
     }
 
     try {
-        const response = await post('login', { hash: hash.value });
+        const response = await post('check');
 
         if (response.user?.hash) {
-            hash.value = response.user.hash; // به‌روزرسانی کوکی
+            setCookie('hash', response.user.hash, 365);
+            token.value = response.token;
             return { isLoggedIn: true, user: response.user };
         }
 

@@ -53,7 +53,8 @@ const handleSubmit = async () => {
       password_confirmation: form.value.password_confirmation
     });
 
-    if ( response.user.username ) {
+    if ( response.user.hash ) {
+      setCookie('token', response.token, 365);
       setCookie('hash', response.user.hash, 365);
 
       await Swal.fire({

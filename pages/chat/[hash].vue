@@ -2,44 +2,33 @@
   <div class="chat-room">
     <!-- هدر چت -->
     <div class="chat-room-header">
-      <h3>{{ currentChat.username }}</h3>
+      <h3>{{ currentChat?.username || 'چت ناشناس' }}</h3>
     </div>
-
+    <div v-if="currentChat" class="chat-room">
+      <!-- محتوای چت -->
+    </div>
+    <div v-else>
+      در حال بارگذاری...
+    </div>
     <!-- پیام‌ها -->
     <div class="messages" ref="messagesContainer">
-      <div
-          v-for="message in messages"
-          :key="message.id"
-          :class="['message', message.sender === user.hash ? 'sent' : 'received']"
-      >
+      <div v-for="message in messages" :key="message.id" :class="['message', message.sender === user.hash ? 'sent' : 'received']">
         <div class="message-content">
           <p>{{ message.text }}</p>
-          <span class="message-time">{{ message.created_at }}</span>
-          <span
-              v-if="message.sender === user.hash && message.status === 2"
-              class="message-status edited"
-          >(ویرایش شده)</span>
+          <span class="message-time">{{ message.date }}</span>
+          <span v-if="message.sender === user.hash && message.status === 2" class="message-status edited">(ویرایش شده)</span>
         </div>
-        <div
-            v-if="message.sender === user.hash"
-            class="message-actions"
-        >
+        <div v-if="message.sender === user.hash" class="message-actions">
           <button @click="editMessage(message)">ویرایش</button>
           <button @click="deleteMessage(message.id)">حذف</button>
         </div>
       </div>
     </div>
-
     <!-- ورودی پیام -->
     <div class="message-input">
-      <input
-          v-model="newMessage"
-          @keyup.enter="sendMessage"
-          placeholder="پیام خود را بنویسید..."
-      />
+      <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="پیام خود را بنویسید..."/>
       <button @click="sendMessage">ارسال</button>
     </div>
-
     <!-- مودال ویرایش پیام -->
     <div v-if="editingMessage" class="edit-modal">
       <div class="modal-content">
@@ -53,74 +42,86 @@
     </div>
   </div>
 </template>
-
 <script setup>
-const route = useRoute();
-const hash = route.params.hash;
+import { setPageLayout } from "#app";
+import { post } from '~/composables/post.js';
 
-const user = ref({});
-const currentChat = ref({});
-const messages = ref([]);
-const newMessage = ref('');
-const editingMessage = ref(null);
-const editText = ref('');
+const route = useRoute();
+const hash  = route.params.hash;
+setPageLayout('chat');
+
+const user              = ref({});
+const currentChat       = ref(null);
+const messages          = ref([]);
+const newMessage        = ref('');
+const editingMessage    = ref(null);
+const editText          = ref('');
 const messagesContainer = ref(null);
 
-// دریافت اطلاعات کاربر و چت
-const { data: userData } = await useFetch('/api/user');
-user.value = userData.value;
+defineProps({
+  currentChat: {
+    type: Object,
+    default: () => null
+  }
+})
 
-const { data: chatData } = await useFetch(`/api/chat-info/${hash}`);
-currentChat.value = chatData.value;
 
-// بارگذاری پیام‌ها
-const loadMessages = async () => {
-  const { data } = await useFetch('/api/chats', {
-    method: 'POST',
-    body: { receiver: hash }
-  });
-  messages.value = data.value;
+
+const loadChatInfo = async () => {
+  try {
+    const response    = await post(`chat-info/${ hash }`);
+    currentChat.value = response.data;
+  } catch ( error ) {
+    console.error('خطا در دریافت اطلاعات چت:', error);
+    // مدیریت خطا (مثلاً ریدایرکت یا نمایش پیغام)
+  }
 };
 
-await loadMessages();
+
+
+Promise.all([ loadChatInfo() ]).then(() => {
+  scrollToBottom();
+});
 
 // ارسال پیام جدید
 const sendMessage = async () => {
-  if (!newMessage.value.trim()) return;
+  if ( !newMessage.value.trim() ) return;
 
-  const { data } = await useFetch('/api/send', {
-    method: 'POST',
-    body: {
+  try {
+    const response = await post('send', {
       receiver: hash,
       text: newMessage.value
-    }
-  });
+    });
 
-  if (data.value.success) {
-    newMessage.value = '';
-    await loadMessages();
-    scrollToBottom();
+    if ( response.success ) {
+      newMessage.value = '';
+      await loadMessages();
+      scrollToBottom();
+    }
+  } catch ( error ) {
+    console.error('خطا در ارسال پیام:', error);
   }
 };
 
 // ویرایش پیام
 const editMessage = (message) => {
   editingMessage.value = message.id;
-  editText.value = message.text;
+  editText.value       = message.text;
 };
 
 const updateMessage = async () => {
-  const { data } = await useFetch('/api/edit', {
-    method: 'POST',
-    body: {
+  try {
+    const response = await post('edit', {
       id: editingMessage.value,
       text: editText.value
-    }
-  });
+    });
 
-  if (data.value.success) {
-    editingMessage.value = null;
-    await loadMessages();
+    if ( response.success ) {
+      editingMessage.value = null;
+      await loadMessages();
+    }
+  } catch ( error ) {
+    console.error('خطا در ویرایش پیام:', error);
   }
 };
 
@@ -128,15 +129,25 @@ const cancelEdit = () => {
   editingMessage.value = null;
 };
 
-// حذف پیام (در صورت نیاز می‌توانید پیاده‌سازی کنید)
-const deleteMessage = (id) => {
-  // عملیات حذف پیام
+// حذف پیام
+const deleteMessage = async (id) => {
+  try {
+    const response = await post('delete', {
+      id: id
+    });
+
+    if ( response.success ) {
+      await loadMessages();
+    }
+  } catch ( error ) {
+    console.error('خطا در حذف پیام:', error);
+  }
 };
 
 // اسکرول به پایین
 const scrollToBottom = () => {
   nextTick(() => {
-    if (messagesContainer.value) {
+    if ( messagesContainer.value ) {
       messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
     }
   });
@@ -146,132 +157,28 @@ const scrollToBottom = () => {
 onMounted(() => {
   scrollToBottom();
 
-  // پولینگ برای پیام‌های جدید
   setInterval(async () => {
-    const { data } = await useFetch('/api/load', {
-      method: 'POST',
-      body: { receiver: hash }
-    });
+    try {
+      const response = await post('load', {
+        receiver: hash
+      });
 
-    if (data.value && data.value.length > 0) {
-      messages.value.push(...data.value);
-      scrollToBottom();
+      if ( response && response.length > 0 ) {
+        const newMessages = response.filter(newMsg =>
+            !messages.value.some(existingMsg => existingMsg.id === newMsg.id)
+        );
+
+        if ( newMessages.length > 0 ) {
+          messages.value.push(... newMessages);
+          scrollToBottom();
+        }
+      }
+    } catch ( error ) {
+      console.error('خطا در دریافت پیام‌های جدید:', error);
     }
   }, 5000);
 });
 </script>
-
 <style>
-.chat-room {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.chat-room-header {
-  padding: 1rem;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 1rem;
-}
-
-.message {
-  margin-bottom: 1rem;
-  max-width: 70%;
-}
-
-.message.sent {
-  align-self: flex-end;
-  background-color: #007bff;
-  color: white;
-  border-radius: 1rem 1rem 0 1rem;
-  padding: 0.5rem 1rem;
-}
-
-.message.received {
-  align-self: flex-start;
-  background-color: #f8f9fa;
-  border-radius: 1rem 1rem 1rem 0;
-  padding: 0.5rem 1rem;
-}
-
-.message-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.message-time {
-  font-size: 0.75rem;
-  opacity: 0.7;
-}
-
-.message-status.edited {
-  font-size: 0.75rem;
-  font-style: italic;
-}
-
-.message-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.message-actions button {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.75rem;
-}
-
-.message-input {
-  display: flex;
-  padding: 1rem;
-  border-top: 1px solid #dee2e6;
-}
-
-.message-input input {
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #dee2e6;
-  border-radius: 0.25rem;
-}
-
-.message-input button {
-  margin-left: 0.5rem;
-  padding: 0.5rem 1rem;
-}
-
-.edit-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background-color: white;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  width: 80%;
-  max-width: 500px;
-}
-
-.modal-content textarea {
-  width: 100%;
-  min-height: 100px;
-  margin: 1rem 0;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-}
+@import "@/assets/css/chat.css";
 </style>

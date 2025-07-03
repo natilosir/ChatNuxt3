@@ -11,11 +11,6 @@
         <img src="~/assets/img/illustrations/auth-login-illustration-dark.png" alt="تصویر چت" class="illustration-img"/>
         <div class="stats">
           <div class="stat-card">
-            <span class="stat-icon">💬</span>
-            <p>۸۹.۳۴ هزار <br/> گفت‌وگوهای فعال <br/> در یک سال اخیر</p>
-            <span class="stat-growth" style="color: #FF5555">+۱۲٪</span>
-          </div>
-          <div class="stat-card">
             <span class="stat-icon">📈</span>
             <p>۲۴.۶ هزار <br/> کاربران جدید <br/> ۱۲٪ رشد</p>
             <span class="stat-progress" style="background: conic-gradient(#00FF00 12%, #444 0deg)"></span>
@@ -34,9 +29,4 @@
 </template>
 <style>
 @import "@/assets/css/auth-style.css";
-
-:global(body) {
-  margin: 0;
-  padding: 0;
-}
 </style>
