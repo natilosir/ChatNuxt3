@@ -69,7 +69,9 @@ defineProps({
 
 const loadChatInfo = async () => {
   try {
-    const response    = await post(`chat-info/${ hash }`);
+    const response    = await post('AllChats/',{
+      receiver : hash
+    });
     currentChat.value = response.data;
   } catch ( error ) {
     console.error('خطا در دریافت اطلاعات چت:', error);

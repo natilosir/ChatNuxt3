@@ -1,7 +1,6 @@
 <template>
   <aside class="app-sidebar">
     <div class="sidebar-header">
-      <h3>مکالمات</h3>
       <button v-if="isMobile" @click="$emit('close-sidebar')" class="close-btn">
         <i class="bi bi-x-lg"></i>
       </button>
@@ -33,6 +32,7 @@
 import { onMounted, ref } from 'vue';
 import { post } from '~/composables/post.js';
 import { Auth_user } from '~/composables/eventBus';
+import Swal from "sweetalert2";
 
 const props = defineProps({
   activeChat: {
@@ -52,7 +52,7 @@ const username_login = ref(null);
 
 const fetchChats = async () => {
   try {
-    const response = await post('GetChats', {});
+    const response = await post('GetChatsData', {});
 
     Auth_user.value = response;
 
@@ -103,11 +103,21 @@ const createNewChat = async () => {
       });
       selectChat(response.hash);
       searchQuery.value = '';
-    } else {
-      console.error('پاسخ نامعتبر از API ایجاد چت');
     }
   } catch ( error ) {
-    console.error('خطا در ایجاد چت:', error);
+    Swal.fire({
+      icon: 'error',
+      title: `خطای${ error.status }`,
+      text: error.data.error,
+      position: 'top-end',
+      toast: true,
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+    });
+
+
+
   }
 };
 

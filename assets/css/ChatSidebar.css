@@ -8,20 +8,6 @@
     overflow: hidden;
 }
 
-.sidebar-header {
-    padding: 1.2rem 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.sidebar-header h3 {
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: 600;
-}
-
 .close-btn {
     background: transparent;
     border: none;
