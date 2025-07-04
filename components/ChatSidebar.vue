@@ -29,20 +29,15 @@
   </aside>
 </template>
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, onUnmounted } from 'vue';
 import { post } from '~/composables/post.js';
 import { Auth_user } from '~/composables/eventBus';
 import Swal from "sweetalert2";
+import { throttle } from 'lodash';
 
 const props = defineProps({
-  activeChat: {
-    type: String,
-    default: null
-  },
-  isMobile: {
-    type: Boolean,
-    default: false
-  }
+  activeChat: { type: String, default: null },
+  isMobile: { type: Boolean, default: false }
 });
 
 const emit           = defineEmits([ 'select-chat', 'close-sidebar' ]);
@@ -50,10 +45,9 @@ const searchQuery    = ref('');
 const chats          = ref([]);
 const username_login = ref(null);
 
-const fetchChats = async () => {
+const throttledFetchChats = throttle(async () => {
   try {
-    const response = await post('GetChatsData', {});
-
+    const response  = await post('GetChatsData', {});
     Auth_user.value = response;
 
     if ( response?.chats && Array.isArray(response.chats) ) {
@@ -63,13 +57,12 @@ const fetchChats = async () => {
         lastMessage: '',
         time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
       }));
-
     }
   } catch ( error ) {
     console.error('خطا در دریافت چت‌ها:', error);
     chats.value = [];
   }
-};
+}, 40000); // هر ۴ ثانیه
 
 // گرفتن حروف ابتدایی نام
 const getInitials = (name) => {
@@ -107,7 +100,7 @@ const createNewChat = async () => {
   } catch ( error ) {
     Swal.fire({
       icon: 'error',
-      title: `خطای${ error.status }`,
+      title: `خطای ${ error.status }`,
       text: error.data.error,
       position: 'top-end',
       toast: true,
@@ -115,15 +108,21 @@ const createNewChat = async () => {
       timer: 2000,
       timerProgressBar: true,
     });
-
-
-
   }
 };
 
-// بارگذاری اولیه چت‌ها
+// بارگذاری اولیه چت‌ها و تنظیم interval برای به‌روزرسانی
+let chatInterval = null;
 onMounted(() => {
-  fetchChats();
+  throttledFetchChats(); // بارگذاری اولیه
+  chatInterval = setInterval(throttledFetchChats, 4000); // به‌روزرسانی هر ۴ ثانیه
+});
+
+// پاکسازی interval هنگام خروج از کامپوننت
+onUnmounted(() => {
+  if ( chatInterval ) {
+    clearInterval(chatInterval);
+  }
 });
 </script>
 <style scoped>

@@ -36,8 +36,8 @@
 
 .search-box i {
     position: absolute;
-    left: 14px;
-    top: 13px;
+    left: 13px;
+    top: 15px;
     color: var(--text-muted);
 }
 
@@ -145,6 +145,7 @@
 
 @media (max-width: 767px) {
     .app-sidebar {
+        margin-top: 38px;
         position: fixed;
         top: 0;
         right: 0;
