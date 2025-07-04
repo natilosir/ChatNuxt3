@@ -33,9 +33,11 @@ const form = ref({
   email: ''
 });
 
+useHead({
+  title: 'فراموشی کلمه عبور'
+})
 setPageLayout('login');
 
-// تابع برای نمایش پیام‌های خطا
 const showErrorMessages = (errorData: Record<string, string[]>) => {
   const errorMessages = Object.values(errorData).flat();
   const firstErrorMessage = errorMessages[0] || 'خطایی رخ داده است';

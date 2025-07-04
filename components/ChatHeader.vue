@@ -5,6 +5,10 @@
         <i class="bi bi-chat-dots-fill"></i> <span>ChatLand</span>
       </NuxtLink>
       <div class="header-right">
+        <div v-if="SelectChat" class="select-chat">
+          {{ SelectChat?.username }} -
+          {{ SelectChat?.name }}
+        </div>
         <div class="profile-menu" @click.stop="toggleMenu">
           <div class="user-info">
             <div class="avatar">
@@ -43,7 +47,7 @@
 </template>
 <script setup>
 import { ref, watch } from 'vue';
-import { Auth_user } from '~/composables/eventBus';
+import { Auth_user, MessUser } from '~/composables/eventBus';
 
 
 const props = defineProps({
@@ -55,13 +59,11 @@ const props = defineProps({
 
 const isMenuOpen = ref(false);
 
-const name = ref(null);
+const name       = ref(null);
+const SelectChat = ref(null);
 
-watch(Auth_user, (newVal) => {
-      name.value = newVal;
-    },
-    { immediate: true }
-);
+watch(Auth_user, (newVal) => {name.value = newVal}, { immediate: false });
+watch(MessUser, (newVal) => {SelectChat.value = newVal.user}, { immediate: false });
 
 
 defineEmits([ 'logout' ]);

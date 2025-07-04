@@ -29,11 +29,10 @@
   </aside>
 </template>
 <script setup>
-import { onMounted, ref, onUnmounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { post } from '~/composables/post.js';
 import { Auth_user } from '~/composables/eventBus';
 import Swal from "sweetalert2";
-import { throttle } from 'lodash';
 
 const props = defineProps({
   activeChat: { type: String, default: null },
@@ -43,9 +42,8 @@ const props = defineProps({
 const emit           = defineEmits([ 'select-chat', 'close-sidebar' ]);
 const searchQuery    = ref('');
 const chats          = ref([]);
-const username_login = ref(null);
 
-const throttledFetchChats = throttle(async () => {
+const throttledFetchChats = async () => {
   try {
     const response  = await post('GetChatsData', {});
     Auth_user.value = response;
@@ -62,7 +60,7 @@ const throttledFetchChats = throttle(async () => {
     console.error('خطا در دریافت چت‌ها:', error);
     chats.value = [];
   }
-}, 40000); // هر ۴ ثانیه
+};
 
 // گرفتن حروف ابتدایی نام
 const getInitials = (name) => {
@@ -111,19 +109,11 @@ const createNewChat = async () => {
   }
 };
 
-// بارگذاری اولیه چت‌ها و تنظیم interval برای به‌روزرسانی
-let chatInterval = null;
 onMounted(() => {
-  throttledFetchChats(); // بارگذاری اولیه
-  chatInterval = setInterval(throttledFetchChats, 4000); // به‌روزرسانی هر ۴ ثانیه
+  throttledFetchChats();
 });
 
-// پاکسازی interval هنگام خروج از کامپوننت
-onUnmounted(() => {
-  if ( chatInterval ) {
-    clearInterval(chatInterval);
-  }
-});
+
 </script>
 <style scoped>
 @import "@/assets/css/ChatSidebar.css";

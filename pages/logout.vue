@@ -5,6 +5,9 @@ import { deleteCookie, post } from '~/composables/post.js';
 const router = useRouter();
 setPageLayout('login');
 
+useHead({
+  title: 'Logging out'
+})
 
 onMounted(async () => {
   const response = await post('logout');

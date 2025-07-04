@@ -32,8 +32,4 @@ const updateMessage = async () => {
   await loadMessages();
 };
 
-const cancelEdit = () => {
-  editingMessage.value = null;
-  editText.value       = '';
-};
 </script>

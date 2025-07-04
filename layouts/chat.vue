@@ -19,6 +19,9 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 
+useHead({
+  title: 'چت‌لند'
+})
 const user        = ref({
   username: '',
   hash: ''
@@ -52,7 +55,7 @@ const fetchChats = async () => {
 onMounted(() => {
   checkMobile();
   window.addEventListener('resize', checkMobile);
-fetchChats();
+  fetchChats();
   chatInterval = setInterval(fetchChats, 40000);
 });
 
@@ -80,7 +83,6 @@ provide('chats', chats);
 provide('activeChat', activeChat);
 provide('selectChat', selectChat);
 </script>
-
 <style>
 @import "@/assets/css/layoutChat.css";
 </style>

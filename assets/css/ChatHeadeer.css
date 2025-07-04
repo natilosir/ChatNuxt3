@@ -38,6 +38,19 @@
     gap: 1rem;
 }
 
+.select-chat {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    padding: 14px 20px;
+    border-radius: 50px;
+    cursor: default;
+    font-size: 0.95rem;
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, 0%);
+}
+
 .profile-menu {
     cursor: pointer;
     position: relative;

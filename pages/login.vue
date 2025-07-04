@@ -40,6 +40,9 @@ const form    = ref({
   password: '',
 });
 
+useHead({
+  title: 'ورود به چت‌لند'
+})
 const auth = await check();
 
 if ( auth.isLoggedIn === true ) {

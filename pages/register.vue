@@ -40,6 +40,11 @@ const form    = ref({
   password_confirmation: '',
 });
 
+
+useHead({
+  title: 'ثبت نلم در چت‌لند'
+})
+
 setPageLayout('login');
 
 const handleSubmit = async () => {
