@@ -1,11 +1,7 @@
 <template>
   <div class="chat-room dark-theme">
-    <!-- هدر چت -->
-    <div class="chat-room-header">
-      <h3>{{ messages?.username || 'چت ناشناس' }}</h3>
-    </div>
     <!-- محتوای چت -->
-    <div v-if="messages" class="chat-room">
+    <div v-if="displayedMessages.chatss" class="chat-room">
       <div class="messages" ref="messagesContainer">
         <div v-for="(message, index) in displayedMessages.chats" :key="index" :class="['message', isMyMessage(message) ? 'sent' : 'received']">
           <div v-if="isMyMessage(message)" class="message-actions">

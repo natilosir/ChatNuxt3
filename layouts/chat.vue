@@ -18,10 +18,10 @@
 </template>
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { is_Mobile } from '~/composables/eventBus';
 
-useHead({
-  title: 'چت‌لند'
-})
+
+useHead({ title: 'چت‌لند' })
 const user        = ref({
   username: '',
   hash: ''
@@ -33,8 +33,10 @@ const showSidebar = ref(false);
 let chatInterval  = null;
 
 const checkMobile = () => {
-  isMobile.value = window.innerWidth < 768;
+  isMobile.value  = window.innerWidth < 768;
+  is_Mobile.value = isMobile.value;
 };
+
 
 const fetchChats = async () => {
   try {

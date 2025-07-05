@@ -38,7 +38,6 @@ const props = defineProps({
   activeChat: { type: String, default: null },
   isMobile: { type: Boolean, default: false }
 });
-
 const emit           = defineEmits([ 'select-chat', 'close-sidebar' ]);
 const searchQuery    = ref('');
 const chats          = ref([]);

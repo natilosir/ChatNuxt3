@@ -46,9 +46,6 @@
     border-radius: 50px;
     cursor: default;
     font-size: 0.95rem;
-    position: fixed;
-    left: 50%;
-    transform: translate(-50%, 0%);
 }
 
 .profile-menu {
@@ -222,6 +219,10 @@
     }
     .logo span {
         display: none;
+    }
+
+    .bi-chat-dots-fill {
+        left: 5px;
     }
 
     .username, .logout-text {

@@ -26,6 +26,9 @@
 }
 
 .main-content {
+    background: url(https://dl.natilos.ir/ffff/bg8.jpg) center top fixed #151515;
+    background-size: contain;
+    height: 100vh;
     display: flex;
     flex-grow: 1;
     position: relative;
@@ -35,7 +38,7 @@
 .chat-view {
     flex: 1;
     overflow: auto;
-    background-color: var(--darker-bg);
+    background-color: #000000aa;
 }
 
 /* موبایل ویو */
@@ -46,10 +49,10 @@
 .sidebar-toggle-btn {
     position: fixed;
     top: 0.5rem;
-    left: 4.5rem;
+    left: 65px;
     width: 3.5rem;
     height: 3.5rem;
-    padding: 9px 0px 0px 0px;
+    padding-top: 9px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.1);
     color: white;
@@ -80,10 +83,14 @@
 }
 
 
+.mobile-view .load {
+    left: 50%;
+}
+
 .load {
     position: fixed;
     top: 38%;
-    left: 50%;
+    left: calc(50% - 150px);
     transform: translateX(-50%) translateY(-50%);
     margin: auto;
 }
@@ -159,4 +166,26 @@
         transform: rotate(945deg);
         opacity: 0;
     }
+}
+
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 10px;
+    background: #555
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 9px;
+    background: linear-gradient(250deg, #3d195c, #6b4c6b);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(250deg, #5a2588, #9e769e);
+    box-shadow: 0 0 2px 1px #555
+}
+
+::-webkit-scrollbar-track {
+    background: #555;
+    border: 1px solid #555
 }
