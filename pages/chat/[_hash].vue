@@ -1,7 +1,7 @@
 <template>
   <div class="chat-room dark-theme">
     <!-- محتوای چت -->
-    <div v-if="displayedMessages.chatss" class="chat-room">
+    <div v-if="displayedMessages.chats" class="chat-room">
       <div class="messages" ref="messagesContainer">
         <div v-for="(message, index) in displayedMessages.chats" :key="index" :class="['message', isMyMessage(message) ? 'sent' : 'received']">
           <div v-if="isMyMessage(message)" class="message-actions">

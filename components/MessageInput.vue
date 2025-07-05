@@ -19,15 +19,9 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
-
-// متغیرهای رنگ برای گرادیانت
-const primaryColor = '#8B5CF6';
-const primaryDark = '#7C3AED';
-
 const newMessage = ref('');
 const textarea = ref(null);
 
-// تشخیص جهت متن
 const textDirection = computed(() => {
   const persianRegex = /[\u0600-\u06FF]/;
   return {
@@ -36,7 +30,6 @@ const textDirection = computed(() => {
   };
 });
 
-// تشخیص placeholder مناسب
 const placeholderText = computed(() => {
   return textDirection.value.direction === 'rtl'
       ? 'پیام عاشقانه بنویس... 🌸'
