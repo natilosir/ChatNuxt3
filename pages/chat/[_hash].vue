@@ -1,6 +1,6 @@
 <template>
   <div class="chat-room dark-theme">
-    <!-- محتوای چت -->
+    <!-- محتوای چت -->{{ displayedMessages.chats }}
     <div v-if="displayedMessages.chats" class="chat-room">
       <div class="messages" ref="messagesContainer">
         <div v-for="(message, index) in displayedMessages.chats" :key="index" :class="['message', isMyMessage(message) ? 'sent' : 'received']">
@@ -38,22 +38,30 @@
 <script setup>
 import { setPageLayout } from '#app';
 import { post } from '~/composables/post.js';
-import { MessUser } from '~/composables/eventBus';
+import { hashOpenChat, MessUser, responseSentChat } from '~/composables/eventBus';
 import MessageInput from '@/components/MessageInput.vue'
 import EditMessageModal from '@/components/EditMessageModal.vue'
+import { watch } from "vue";
 
 setPageLayout('chat');
 
-const route          = useRoute();
-const hash           = route.params._hash;
-const editingMessage = ref(null);
-const editText       = ref('');
-let messages         = ref([]);
-
+const route             = useRoute();
+const hash              = route.params._hash;
+const editingMessage    = ref(null);
+const editText          = ref('');
+let messages            = ref([]);
 const displayedMessages = ref([]);
 const newMessage        = ref('');
 const messagesContainer = ref(null);
 let messageInterval     = null;
+hashOpenChat.value      = hash
+
+
+console.log(displayedMessages.value?.chats)
+
+watch(responseSentChat, (newVal) => {
+  displayedMessages.value.chats = newVal
+}, { immediate: true });
 
 const isMyMessage = (message) => {
   return message.sender !== hash;
@@ -73,9 +81,9 @@ const editMessage = (message) => {
 const loadChatInfo = async () => {
   try {
     let response;
-    response = await post('AllChats', { receiver: hash });
+    response                = await post('AllChats', { receiver: hash });
     displayedMessages.value = response
-    MessUser.value = response;
+    MessUser.value          = response;
 
   } catch ( error ) {
     console.error('خطا در دریافت اطلاعات چت:', error);
@@ -115,15 +123,6 @@ const scrollToBottom = () => {
   });
 };
 
-const sendMessage = async () => {
-  if ( !newMessage.value.trim() ) return;
-  await post('send', {
-    receiver: hash,
-    text: newMessage.value,
-  });
-  newMessage.value = '';
-  await loadMessages();
-};
 
 const deleteMessage = async (id) => {
   await post('delete', { id });

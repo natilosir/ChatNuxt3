@@ -170,3 +170,10 @@
         font-size: 12px;
     }
 }
+.message-status .error {
+    color: #ff5252;
+}
+
+.message.sending {
+    opacity: 0.8;
+}
