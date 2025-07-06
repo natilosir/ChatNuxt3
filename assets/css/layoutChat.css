@@ -37,7 +37,7 @@
 
 .chat-view {
     flex: 1;
-    overflow: auto;
+    overflow: hidden;
     background-color: #000000aa;
 }
 

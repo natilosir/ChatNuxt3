@@ -1,10 +1,14 @@
+<!--[_hash].vue-->
 <template>
-  <div class="chat-room dark-theme">
-    <!-- محتوای چت -->{{ displayedMessages.chats }}
+  <div class="chat-room dark-theme" ref="chatRoomRef">
+    <!-- دکمه اسکرول به پایین -->
+    <button v-if="showScrollButton" @click.stop="scrollToBottom" class="scroll-to-bottom-btn" title="اسکرول به پایین">
+      ↓
+    </button>
     <div v-if="displayedMessages.chats" class="chat-room">
       <div class="messages" ref="messagesContainer">
         <div v-for="(message, index) in displayedMessages.chats" :key="index" :class="['message', isMyMessage(message) ? 'sent' : 'received']">
-          <div v-if="isMyMessage(message)" class="message-actions">
+          <div v-if="isMyMessage(message) && message.status === 1" class="message-actions">
             <button @click.stop="editMessage(message)" class="action-btn">✏️</button>
             <button @click.stop="deleteMessage(message.id)" class="action-btn">🗑️</button>
           </div>
@@ -13,10 +17,11 @@
             <div class="message-footer">
               <span class="message-time">{{ message.created_at }}</span>
               <span v-if="isMyMessage(message)" class="message-status">
-            <span v-if="message.status === 0">🕓</span>
-            <span v-else-if="message.status === 1">✓</span>
-            <span v-else-if="message.status === 2">✓✓</span>
-          </span>
+                <span v-if="message.status === null" class="sending">🕓</span>
+                <span v-else-if="message.status === 0" class="sent">✔</span>
+                <span v-else-if="message.status === 1" class="delivered">✓✓</span>
+                <span v-else-if="message.status === 2" class="failed">✘</span>
+              </span>
             </div>
           </div>
         </div>
@@ -36,35 +41,123 @@
   </div>
 </template>
 <script setup>
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { setPageLayout } from '#app';
 import { post } from '~/composables/post.js';
-import { hashOpenChat, MessUser, responseSentChat } from '~/composables/eventBus';
-import MessageInput from '@/components/MessageInput.vue'
-import EditMessageModal from '@/components/EditMessageModal.vue'
-import { watch } from "vue";
+import { hashOpenChat, MessUser, responseSentChat, tempMessageSent } from '~/composables/eventBus';
+import MessageInput from '@/components/MessageInput.vue';
+import EditMessageModal from '@/components/EditMessageModal.vue';
 
 setPageLayout('chat');
 
 const route             = useRoute();
+const chatRoomRef       = ref(null);
+const showScrollButton  = ref(false);
 const hash              = route.params._hash;
 const editingMessage    = ref(null);
 const editText          = ref('');
-let messages            = ref([]);
+const messages          = ref([]);
 const displayedMessages = ref([]);
 const newMessage        = ref('');
 const messagesContainer = ref(null);
 let messageInterval     = null;
-hashOpenChat.value      = hash
+const currentChatHash   = ref(hash);
+let isRequestInProgress = false;
+
+hashOpenChat.value = hash;
 
 
-console.log(displayedMessages.value?.chats)
+// اضافه کردن یک واچر برای پیام‌های موقت
+// واچر برای tempMessageSent
+watch(tempMessageSent, (newTempMessage) => {
+  if ( !newTempMessage?.id || typeof newTempMessage.id !== 'string' ) {
+    console.error('Invalid temp message format', newTempMessage);
+    return;
+  }
 
-watch(responseSentChat, (newVal) => {
-  displayedMessages.value.chats = newVal
-}, { immediate: true });
+  if ( !displayedMessages.value?.chats ) {
+    displayedMessages.value = { chats: [] };
+  }
+
+  const existingIndex = displayedMessages.value.chats.findIndex(
+      m => m.id === newTempMessage.id
+  );
+
+  if ( existingIndex !== -1 ) {
+    // به‌روزرسانی پیام موجود
+    displayedMessages.value.chats[existingIndex] = { ... newTempMessage };
+  } else {
+    // اضافه کردن پیام جدید
+    displayedMessages.value.chats.push({ ... newTempMessage });
+  }
+
+  scrollToBottom();
+}, { deep: true });
+
+// واچر برای responseSentChat
+
+// واچر برای responseSentChat
+watch(responseSentChat, (newResponse) => {
+  if ( !newResponse ) return;
+
+  if ( !displayedMessages.value?.chats ) {
+    displayedMessages.value = { chats: [] };
+  }
+
+  // اضافه کردن بررسی‌های ایمنی
+  const tempIndex = displayedMessages.value.chats.findIndex(m => {
+    // بررسی وجود id و text
+    if ( !m?.id || !m?.text || !newResponse?.text ) return false;
+
+    // بررسی نوع id و امکان استفاده از startsWith
+    if ( typeof m.id !== 'string' ) return false;
+
+    // مقایسه متن پیام و بررسی id موقت
+    return m.text === newResponse.text && m.id.startsWith('temp-');
+  });
+
+  if ( tempIndex !== -1 ) {
+    // جایگزینی پیام موقت
+    displayedMessages.value.chats[tempIndex] = { ... newResponse };
+  } else {
+    // اضافه کردن پیام جدید
+    displayedMessages.value.chats.push({ ... newResponse });
+  }
+
+  scrollToBottom();
+}, { deep: true });
+
+const updateMessageStatus = (tempId, newStatus) => {
+
+
+  const messageIndex = displayedMessages.value?.chats?.findIndex(msg => msg.id === tempId);
+  if ( messageIndex !== -1 && messageIndex !== undefined ) {
+    displayedMessages.value.chats[messageIndex].status = newStatus;
+  }
+};
+
+
+watch(() => displayedMessages.value?.chats, (newMessages, oldMessages) => {
+  if ( newMessages && newMessages.length !== (oldMessages?.length || 0) ) {
+    scrollToBottom();
+  }
+}, { deep: true });
+
+
+// واچر برای تغییر هش چت
+watch(() => route.params._hash, (newHash) => {
+  currentChatHash.value = newHash;
+  hashOpenChat.value    = newHash;
+
+  // بارگیری اطلاعات چت جدید
+  loadChatInfo();
+
+  // تنظیم مجدد اینتروال
+  setupMessageInterval();
+});
 
 const isMyMessage = (message) => {
-  return message.sender !== hash;
+  return message.sender !== hash || message.sender === 'me';
 };
 
 const cancelEdit = () => {
@@ -77,50 +170,58 @@ const editMessage = (message) => {
   editText.value       = message.text;
 };
 
-
+// بارگیری اطلاعات چت
 const loadChatInfo = async () => {
   try {
-    let response;
-    response                = await post('AllChats', { receiver: hash });
-    displayedMessages.value = response
+    const response          = await post('AllChats', { receiver: currentChatHash.value });
+    displayedMessages.value = response;
     MessUser.value          = response;
-
+    scrollToBottom('auto');
   } catch ( error ) {
     console.error('خطا در دریافت اطلاعات چت:', error);
   }
 };
 
-
-onMounted(() => {
-  loadChatInfo();
-});
-
-
 const loadMessages = async () => {
-  // try {
-  //   const response = await post('load', { receiver: hash });
-  //
-  //   if ( response && Array.isArray(response) ) {
-  //     const newMessages = response.filter(
-  //         newMsg => !messages.value.some(existingMsg => existingMsg.id === newMsg.id)
-  //     );
-  //
-  //     if ( newMessages.length > 0 ) {
-  //       messages.value.push(... newMessages);
-  //       scrollToBottom();
-  //     }
-  //   }
-  // } catch ( error ) {
-  //   console.error('خطا در دریافت پیام‌های جدید:', error);
-  // }
+  if ( isRequestInProgress || !currentChatHash.value ) return;
+
+  try {
+    isRequestInProgress = true;
+    const response      = await post('load', { receiver: currentChatHash.value });
+
+    if ( response?.chats && Array.isArray(response.chats) ) {
+      // اگر پیام جدیدی وجود دارد، نمایش داده شود
+      displayedMessages.value = response;
+    }
+  } catch ( error ) {
+    console.error('خطا در دریافت پیام‌های جدید:', error);
+  } finally {
+    isRequestInProgress = false;
+  }
 };
 
-const scrollToBottom = () => {
+// تابع اسکرول به پایین با انیمیشن
+const scrollToBottom = (behavior = 'smooth') => {
+  const validBehavior = behavior === 'auto' ? 'auto' : 'smooth';
+
   nextTick(() => {
-    if ( messagesContainer.value ) {
-      messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+    const container = chatRoomRef.value?.querySelector('.messages');
+    if ( container ) {
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: validBehavior
+      });
     }
   });
+};
+
+// بررسی موقعیت اسکرول
+const checkScrollPosition = () => {
+  const container = chatRoomRef.value?.querySelector('.messages');
+  if ( container ) {
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    showScrollButton.value                          = scrollHeight - (scrollTop + clientHeight) > 150;
+  }
 };
 
 
@@ -129,14 +230,39 @@ const deleteMessage = async (id) => {
   messages.value = messages.value.filter(msg => msg.id !== id);
 };
 
+
+const setupMessageInterval = () => {
+  clearMessageInterval(); // پاک کردن اینتروال قبلی
+
+  messageInterval = setInterval(async () => {
+    await loadMessages();
+  }, 4000);
+};
+
+// پاک کردن اینتروال
+const clearMessageInterval = () => {
+  if ( messageInterval ) {
+    clearInterval(messageInterval);
+    messageInterval = null;
+  }
+};
+
 onMounted(async () => {
-  await Promise.all([ loadMessages() ]);
-  scrollToBottom();
-  messageInterval = setInterval(loadMessages, 4000);
+  await loadChatInfo();
+  scrollToBottom('auto');
+  setupMessageInterval(); // شروع اینتروال پس از mount
+
+  if ( messagesContainer.value ) {
+    messagesContainer.value.addEventListener('scroll', checkScrollPosition);
+  }
 });
 
 onBeforeUnmount(() => {
-  clearInterval(messageInterval);
+  clearMessageInterval(); // پاک کردن اینتروال هنگام unmount
+
+  if ( messagesContainer.value ) {
+    messagesContainer.value.removeEventListener('scroll', checkScrollPosition);
+  }
 });
 </script>
 <style>

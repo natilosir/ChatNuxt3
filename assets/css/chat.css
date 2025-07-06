@@ -6,11 +6,11 @@
     --text-color: #f0f0f5;
     --text-secondary: #b0b0c0;
     --sent-bg: linear-gradient(135deg, #4a1d96 0%, #6a3cb8 100%);
-    --received-bg: #252538;
+    --received-bg: #252538DF;
     --message-radius: 16px;
     --action-btn-color: #9c64ff;
     --action-btn-hover: #b584ff;
-    --status-color: #9c64ff;
+    --status-color: #ffffff;
     --scrollbar-thumb: #4a3a80;
     --scrollbar-track: #1a1a2a;
     --shadow-color: rgba(0, 0, 0, 0.3);
@@ -28,8 +28,9 @@
 
 /* Messages container */
 .chat-room.dark-theme .messages {
+    max-height: calc(100vh - 150px);
     flex: 1;
-    padding: 20px 16px 80px; /* Extra padding at bottom for fixed input */
+    padding: 20px 16px 80px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -141,13 +142,17 @@
 
 .chat-room.dark-theme .message-time {
     margin-right: 4px;
-    font-feature-settings: "tnum";
+    font-size: 10px;
+    color: #FFFFFFB3;
 }
 
 .chat-room.dark-theme .message-status {
     color: var(--status-color);
+    text-shadow: 0 0 4px #ffffff;
     font-size: 12px;
-    margin-left: 4px;
+    bottom: -9px;
+    right: -6px;
+    position: absolute;
 }
 
 @media (max-width: 768px) {
@@ -171,9 +176,53 @@
     }
 }
 .message-status .error {
-    color: #ff5252;
+    color: #ff4d4f;
+    font-weight: bold;
 }
 
 .message.sending {
     opacity: 0.8;
 }
+
+
+
+
+.scroll-to-bottom-btn {
+    position: fixed;
+    right: 20px;
+    bottom: 80px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1000;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
+.scroll-to-bottom-btn:hover {
+    opacity: 1;
+}
+
+.dark-theme .scroll-to-bottom-btn {
+    background-color: #2E7D32;
+}
+
+
+
+
+
+
+
+
+
+
+
