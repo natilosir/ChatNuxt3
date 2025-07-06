@@ -14,20 +14,39 @@
         <i class="bi bi-plus-lg"></i>
       </button>
     </div>
-    <div class="chat-list">
-      <div v-for="chat in chats" :key="chat.hash" :class="['chat-item', { active: activeChat === chat.hash }]" @click="selectChat(chat.hash)">
-        <div class="chat-avatar">
-          {{ getInitials(chat.username) }}
+
+    <div v-if="loading" class="load">
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+    </div>
+
+    <div v-else-if="chats" class="chat-room">
+      <div class="chat-list">
+        <div v-for="chat in chats" :key="chat.hash" :class="['chat-item', { active: activeChat === chat.hash }]" @click="selectChat(chat.hash)">
+          <div class="chat-avatar">
+            {{ getInitials(chat.username) }}
+          </div>
+          <div class="chat-info">
+            <span class="chat-name">{{ chat.username }}</span>
+            <span class="chat-last-msg">{{ chat.lastMessage || 'آخرین پیام...' }}</span>
+          </div>
+          <div class="chat-time">{{ chat.time || '12:30' }}</div>
         </div>
-        <div class="chat-info">
-          <span class="chat-name">{{ chat.username }}</span>
-          <span class="chat-last-msg">{{ chat.lastMessage || 'آخرین پیام...' }}</span>
-        </div>
-        <div class="chat-time">{{ chat.time || '12:30' }}</div>
       </div>
+    </div>
+    <div v-else class="load">
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
     </div>
   </aside>
 </template>
+
 <script setup>
 import { onMounted, ref } from 'vue';
 import { post } from '~/composables/post.js';
@@ -38,16 +57,18 @@ const props = defineProps({
   activeChat: { type: String, default: null },
   isMobile: { type: Boolean, default: false }
 });
-const emit           = defineEmits([ 'select-chat', 'close-sidebar' ]);
-const searchQuery    = ref('');
-const chats          = ref([]);
+const emit = defineEmits(['select-chat', 'close-sidebar']);
+const searchQuery = ref('');
+const chats = ref([]);
+const loading = ref(false);
 
 const throttledFetchChats = async () => {
   try {
-    const response  = await post('GetChatsData', {});
+    loading.value = true;
+    const response = await post('GetChatsData', {});
     Auth_user.value = response;
 
-    if ( response?.chats && Array.isArray(response.chats) ) {
+    if (response?.chats && Array.isArray(response.chats)) {
       chats.value = response.chats.map(chat => ({
         hash: chat.hash,
         username: chat.username,
@@ -55,36 +76,36 @@ const throttledFetchChats = async () => {
         time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
       }));
     }
-  } catch ( error ) {
+  } catch (error) {
     console.error('خطا در دریافت چت‌ها:', error);
     chats.value = [];
+  } finally {
+    loading.value = false;
   }
 };
 
-// گرفتن حروف ابتدایی نام
 const getInitials = (name) => {
-  if ( !name ) return '';
+  if (!name) return '';
   return name.substring(0, 1).toUpperCase();
 };
 
-// انتخاب چت
 const selectChat = (hash) => {
   emit('select-chat', hash);
-  if ( props.isMobile ) {
+  if (props.isMobile) {
     emit('close-sidebar');
   }
 };
 
-// ایجاد چت جدید
 const createNewChat = async () => {
-  if ( !searchQuery.value ) return;
+  if (!searchQuery.value) return;
 
   try {
+    `loading`.value = true;
     const response = await post('CreateChat', {
       username: searchQuery.value
     });
 
-    if ( response?.hash ) {
+    if (response?.hash) {
       chats.value.unshift({
         hash: response.hash,
         username: searchQuery.value,
@@ -94,10 +115,10 @@ const createNewChat = async () => {
       selectChat(response.hash);
       searchQuery.value = '';
     }
-  } catch ( error ) {
+  } catch (error) {
     Swal.fire({
       icon: 'error',
-      title: `خطای ${ error.status }`,
+      title: `خطای ${error.status}`,
       text: error.data.error,
       position: 'top-end',
       toast: true,
@@ -105,15 +126,16 @@ const createNewChat = async () => {
       timer: 2000,
       timerProgressBar: true,
     });
+  } finally {
+    loading.value = false;
   }
 };
 
 onMounted(() => {
   throttledFetchChats();
 });
-
-
 </script>
+
 <style scoped>
 @import "@/assets/css/ChatSidebar.css";
 </style>

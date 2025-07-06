@@ -58,7 +58,7 @@ onMounted(() => {
   checkMobile();
   window.addEventListener('resize', checkMobile);
   fetchChats();
-  chatInterval = setInterval(fetchChats, 40000);
+  chatInterval = setInterval(fetchChats, 90000);
 });
 
 onBeforeUnmount(() => {
