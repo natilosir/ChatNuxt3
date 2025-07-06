@@ -1,10 +1,7 @@
 <!--[_hash].vue-->
 <template>
   <div class="chat-room dark-theme" ref="chatRoomRef">
-    <!-- دکمه اسکرول به پایین -->
-    <button v-if="showScrollButton" @click.stop="scrollToBottom" class="scroll-to-bottom-btn" title="اسکرول به پایین">
-      ↓
-    </button>
+    <button v-if="showScrollButton" @click.stop="scrollToBottom" class="scroll-to-bottom-btn" title="اسکرول به پایین">↓</button>
     <div v-if="displayedMessages.chats" class="chat-room">
       <div class="messages" ref="messagesContainer">
         <div v-for="(message, index) in displayedMessages.chats" :key="index" :class="['message', isMyMessage(message) ? 'sent' : 'received']">
@@ -17,10 +14,10 @@
             <div class="message-footer">
               <span class="message-time">{{ message.created_at }}</span>
               <span v-if="isMyMessage(message)" class="message-status">
-                <span v-if="message.status === null" class="sending">🕓</span>
-                <span v-else-if="message.status === 0" class="sent">✔</span>
-                <span v-else-if="message.status === 1" class="delivered">✓✓</span>
-                <span v-else-if="message.status === 2" class="failed">✘</span>
+                <span v-if="message.status === null">🕓</span>
+                <span v-else-if="message.status === 0">✔</span>
+                <span v-else-if="message.status === 1">✓✓</span>
+                <span v-else-if="message.status === 2" class="error">✘</span>
               </span>
             </div>
           </div>
@@ -93,8 +90,6 @@ watch(tempMessageSent, (newTempMessage) => {
 
   scrollToBottom();
 }, { deep: true });
-
-// واچر برای responseSentChat
 
 // واچر برای responseSentChat
 watch(responseSentChat, (newResponse) => {
@@ -188,11 +183,54 @@ const loadMessages = async () => {
   try {
     isRequestInProgress = true;
     const response      = await post('load', { receiver: currentChatHash.value });
+    if ( Array.isArray(response) ) {
+      if ( response.length === 0 || response[0] === "X" ) {
+        // فقط وضعیت پیام‌ها را به‌روزرسانی کن
+        if ( displayedMessages.value?.chats ) {
+          displayedMessages.value.chats.forEach(message => {
+            message.status = 1;
+          });
+        }
+      } else {
 
-    if ( response?.chats && Array.isArray(response.chats) ) {
-      // اگر پیام جدیدی وجود دارد، نمایش داده شود
-      displayedMessages.value = response;
+        // پیام‌های جدید را به لیست موجود اضافه کن
+        const audio  = new Audio('/assets/sound_in.wav');
+        audio.volume = 0.7;
+        audio.play().catch(e => console.error('خطا در پخش صدا:', e));
+        if ( !displayedMessages.value?.chats ) {
+          displayedMessages.value = { chats: [] };
+        }
+
+        // فقط پیام‌هایی که قبلاً وجود نداشته‌اند را اضافه کن
+        response.forEach(newMessage => {
+          const exists = displayedMessages.value.chats.some(
+              msg => msg.id === newMessage.id
+          );
+          if ( !exists ) {
+
+            displayedMessages.value.chats.push(newMessage);
+          }
+        });
+        scrollToBottom('auto');
+      }
+    } else if ( response?.chats ) {
+      // اگر ساختار پاسخ {chats: [...]} بود
+      if ( !displayedMessages.value?.chats ) {
+
+        displayedMessages.value = response;
+      } else {
+        response.chats.forEach(newMessage => {
+          const exists = displayedMessages.value.chats.some(
+              msg => msg.id === newMessage.id
+          );
+          if ( !exists ) {
+
+            displayedMessages.value.chats.push(newMessage);
+          }
+        });
+      }
     }
+
   } catch ( error ) {
     console.error('خطا در دریافت پیام‌های جدید:', error);
   } finally {
@@ -220,7 +258,7 @@ const checkScrollPosition = () => {
   const container = chatRoomRef.value?.querySelector('.messages');
   if ( container ) {
     const { scrollTop, scrollHeight, clientHeight } = container;
-    showScrollButton.value                          = scrollHeight - (scrollTop + clientHeight) > 150;
+    showScrollButton.value                          = scrollHeight - (scrollTop + clientHeight) > 350;
   }
 };
 

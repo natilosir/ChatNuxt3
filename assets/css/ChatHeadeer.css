@@ -38,6 +38,10 @@
     gap: 1rem;
 }
 
+.select-chat:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
 .select-chat {
     background: rgba(255, 255, 255, 0.1);
     border: none;
@@ -207,16 +211,20 @@
     transform: translateY(-10px);
     opacity: 0;
 }
-.bi-chevron-down{
+
+.bi-chevron-down {
     margin-top: 6px;
 }
+
 @media (max-width: 768px) {
     .logout-btn i {
         font-size: 25px;
     }
-    .logout-btn{
+
+    .logout-btn {
         padding: 0px 10px 0 14px;
     }
+
     .logo span {
         display: none;
     }

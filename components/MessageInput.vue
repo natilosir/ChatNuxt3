@@ -22,18 +22,18 @@ watch(hashOpenChat, (newVal) => { hash.value = newVal }, { immediate: true });
 
 // MessageInput.vue
 const sendMessage = async () => {
-  if (!newMessage.value.trim() || isSending.value) return;
+  if ( !newMessage.value.trim() || isSending.value ) return;
 
-  isSending.value = true;
-  const tempId = `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  isSending.value   = true;
+  const tempId      = `temp-${ Date.now() }-${ Math.random().toString(36).substr(2, 9) }`;
   const messageText = newMessage.value;
-
+  newMessage.value  = '';
   // ایجاد پیام موقت با status: null (در حال ارسال)
   const tempMessage = {
     id: tempId,
     text: messageText,
     sender: 'me',
-    created_at: new Date().toISOString(),
+    created_at: new Date().toLocaleTimeString('fa-IR'),
     status: null
   };
 
@@ -46,7 +46,7 @@ const sendMessage = async () => {
       text: messageText
     });
 
-    if (!response?.success) {
+    if ( !response?.success ) {
       throw new Error('ارسال ناموفق بود');
     }
 
@@ -55,18 +55,17 @@ const sendMessage = async () => {
       id: response.id,
       text: messageText,
       sender: response.sender || 'me',
-      created_at: response.created_at || new Date().toISOString(),
-      status: 1 // وضعیت موفق
+      created_at: response.created_at,
+      status: 0 // وضعیت موفق
     };
 
-    newMessage.value = '';
     playSoftSound();
-  } catch (error) {
+  } catch ( error ) {
     console.error('خطا در ارسال پیام:', error);
 
     // ارسال وضعیت ناموفق - استفاده از tempMessageSent
     tempMessageSent.value = {
-      ...tempMessage,
+      ... tempMessage,
       status: 2 // وضعیت ناموفق
     };
 
@@ -98,7 +97,6 @@ const adjustHeight    = () => {
     textarea.value.style.height = `${ textarea.value.scrollHeight }px`;
   }
 };
-// ارسال پیام جدید
 
 // مدیریت کلید اینتر
 const handleEnter = (e) => {
@@ -112,14 +110,15 @@ const handleEnter = (e) => {
 
 // پخش صداهای ملایم
 const playSoftSound = () => {
-  const audio  = new Audio('/assets/Checkeffect.mp3');
-  audio.volume = 0.05;
+  const audio = new Audio('/assets/sound_out.wav');
+  audio.volume = 0.99;
   audio.play().catch(e => console.error('خطا در پخش صدا:', e));
 };
 
 const playErrorSound = () => {
-  const audio  = new Audio('/assets/Checkeffect.mp3');
-  audio.volume = 0.05;
+  const audio = new Audio('/assets/error.mp3');
+  audio.volume = 0.99;
+  audio.play().catch(e => console.error('خطا در پخش صدا:', e));
 };
 
 watch(newMessage, (val) => {
