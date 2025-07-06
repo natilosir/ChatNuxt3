@@ -1,5 +1,5 @@
 <!--[_hash].vue-->
-<template>
+<template><NuxtPage keepalive />
   <div class="chat-room dark-theme" ref="chatRoomRef">
     <button v-if="showScrollButton" @click.stop="scrollToBottom" class="scroll-to-bottom-btn" title="اسکرول به پایین">↓</button>
     <div v-if="displayedMessages.chats" class="chat-room">
@@ -39,12 +39,18 @@
 </template>
 <script setup>
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { setPageLayout } from '#app';
+import { setPageLayout, useCookie } from '#app';
 import { post } from '~/composables/post.js';
 import { hashOpenChat, MessUser, responseSentChat, tempMessageSent } from '~/composables/eventBus';
 import MessageInput from '@/components/MessageInput.vue';
 import EditMessageModal from '@/components/EditMessageModal.vue';
+import { check } from "~/utils/check.js";
 
+let auth = await check();
+
+if ( Boolean(auth.isLoggedIn) === false ) {
+  navigateTo('/login');
+}
 setPageLayout('chat');
 
 const route             = useRoute();
@@ -122,14 +128,8 @@ watch(responseSentChat, (newResponse) => {
   scrollToBottom();
 }, { deep: true });
 
-const updateMessageStatus = (tempId, newStatus) => {
+useCookie('last_hash').value = hash
 
-
-  const messageIndex = displayedMessages.value?.chats?.findIndex(msg => msg.id === tempId);
-  if ( messageIndex !== -1 && messageIndex !== undefined ) {
-    displayedMessages.value.chats[messageIndex].status = newStatus;
-  }
-};
 
 
 watch(() => displayedMessages.value?.chats, (newMessages, oldMessages) => {
@@ -184,7 +184,7 @@ const loadMessages = async () => {
     isRequestInProgress = true;
     const response      = await post('load', { receiver: currentChatHash.value });
     if ( Array.isArray(response) ) {
-      if ( response.length === 0 || response[0] === "X" ) {
+      if ( response.length === 0 ) {
         // فقط وضعیت پیام‌ها را به‌روزرسانی کن
         if ( displayedMessages.value?.chats ) {
           displayedMessages.value.chats.forEach(message => {
@@ -192,7 +192,7 @@ const loadMessages = async () => {
           });
         }
       } else {
-
+        if ( response[0] === "X" ) return;
         // پیام‌های جدید را به لیست موجود اضافه کن
         const audio  = new Audio('/assets/sound_in.wav');
         audio.volume = 0.7;

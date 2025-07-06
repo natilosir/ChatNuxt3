@@ -46,16 +46,16 @@ export function deleteCookie(name: string): void {
  */
 export async function post(url: string, data: any): Promise<any> {
 
-    const response = await fetch(`http://localhost:8000/api/${url}`, {
+    const response = await fetch(`https://api.natilos.ir/chat/api/${url}`, {
         method: 'POST',
-        credentials: 'include',
+        // credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': 'Bearer ' + useCookie('token').value,
-            'X-Requested-With': 'XMLHttpRequest',
         },
         body: JSON.stringify(data),
+        mode: 'cors',
     });
 
     if (!response.ok) {
