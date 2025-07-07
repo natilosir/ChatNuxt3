@@ -45,8 +45,9 @@ export function deleteCookie(name: string): void {
  * ارسال درخواست POST
  */
 export async function post(url: string, data: any): Promise<any> {
-
-    const response = await fetch(`http://localhost:8000/api/${url}`, {
+    // let envurl = `http://localhost:8000/api/${url}`
+    let envurl = `https://api.natilos.ir/chat/api/${url}`
+    const response = await fetch(envurl, {
         method: 'POST',
         // credentials: 'include',
         headers: {
