@@ -18,7 +18,6 @@ if ( Boolean(auth.isLoggedIn) === false ) {
   let last_hash;
   last_hash = useCookie('last_hash').value
   if ( last_hash ) {
-    console.log(last_hash)
     await navigateTo(`/chat/${ last_hash }`);
   }
 }

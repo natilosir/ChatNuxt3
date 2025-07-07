@@ -43,6 +43,7 @@
 }
 
 .select-chat {
+    transition: 0.2s;
     background: rgba(255, 255, 255, 0.1);
     border: none;
     color: white;

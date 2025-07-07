@@ -1,7 +1,8 @@
 <!--MessageInput.vue:-->
 <template>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
   <div class="message-input violet-gradient-theme">
-    <textarea v-model="newMessage" @keydown.enter.prevent="handleEnter" ref="textarea" :style="textDirection" :placeholder="placeholderText" @input="adjustHeight" rows="1" class="violet-gradient-input"></textarea>
+<textarea v-model="newMessage" @keydown.enter.prevent="handleEnter" ref="textarea" :style="textDirection" :placeholder="placeholderText" @input="adjustHeight" rows="1" class="violet-gradient-input" wrap="soft"></textarea>
     <button @click="sendMessage" class="violet-gradient-button">
       <span class="flower-effect">ارسال</span> <span class="small-flower">🌸</span>
     </button>
@@ -77,24 +78,25 @@ const sendMessage = async () => {
 
 
 const textDirection = computed(() => {
-  const persianRegex = /[\u0600-\u06FF]/;
+  const persianRegex = /[\u0600-\u06FF\s]/;
+  const isRtl        = persianRegex.test(newMessage.value) || !newMessage.value;
   return {
-    direction: persianRegex.test(newMessage.value) ? 'rtl' : 'ltr',
-    textAlign: persianRegex.test(newMessage.value) ? 'right' : 'left'
+    direction: isRtl ? 'rtl' : 'ltr',
+    textAlign: isRtl ? 'right' : 'left'
   };
 });
 // تشخیص placeholder مناسب
 
 const placeholderText = computed(() => {
   return textDirection.value.direction === 'rtl'
-      ? 'پیام عاشقانه بنویس... 🌸'
+      ? 'پیام خودتو بنویس... 🌸'
       : 'Type your sweet message... 🌸';
 });
 // تنظیم ارتفاع خودکار
 const adjustHeight    = () => {
   if ( textarea.value ) {
-    textarea.value.style.height = 'auto';
-    textarea.value.style.height = `${ textarea.value.scrollHeight }px`;
+    textarea.value.style.height = 'auto'; // ریست ارتفاع
+    textarea.value.style.height = `${ Math.min(textarea.value.scrollHeight, 120) }px`; // محدود کردن حداکثر ارتفاع
   }
 };
 
@@ -110,13 +112,13 @@ const handleEnter = (e) => {
 
 // پخش صداهای ملایم
 const playSoftSound = () => {
-  const audio = new Audio('/assets/sound_out.wav');
+  const audio  = new Audio('/assets/sound_out.wav');
   audio.volume = 0.99;
   audio.play().catch(e => console.error('خطا در پخش صدا:', e));
 };
 
 const playErrorSound = () => {
-  const audio = new Audio('/assets/error.mp3');
+  const audio  = new Audio('/assets/error.mp3');
   audio.volume = 0.99;
   audio.play().catch(e => console.error('خطا در پخش صدا:', e));
 };

@@ -72,8 +72,8 @@ const throttledFetchChats = async () => {
       chats.value = response.chats.map(chat => ({
         hash: chat.hash,
         username: chat.username,
-        lastMessage: '',
-        time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
+        lastMessage: chat.last_message.text,
+        time: chat.last_message.created_at,
       }));
     }
   } catch (error) {
@@ -100,7 +100,7 @@ const createNewChat = async () => {
   if (!searchQuery.value) return;
 
   try {
-    `loading`.value = true;
+    loading.value = true;
     const response = await post('CreateChat', {
       username: searchQuery.value
     });
@@ -110,7 +110,7 @@ const createNewChat = async () => {
         hash: response.hash,
         username: searchQuery.value,
         lastMessage: '',
-        time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
+        time: chat.updated_at,
       });
       selectChat(response.hash);
       searchQuery.value = '';
