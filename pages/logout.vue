@@ -14,6 +14,7 @@ onMounted(async () => {
   try {
     if ( response.status === true ) {
       deleteCookie('hash')
+      deleteCookie('token')
       await navigateTo('/login');
     }
   } catch ( e ) {

@@ -46,10 +46,11 @@ export function deleteCookie(name: string): void {
  */
 export async function post(url: string, data: any): Promise<any> {
     // let envurl = `http://localhost:8000/api/${url}`
-    let envurl = `https://api.natilos.ir/chat/api/${url}`
+    // let envurl = `https://api.natilos.ir/chat/api/${url}`
+    let envurl = `http://chat.xcodestudio.ir/api/${url}`
     const response = await fetch(envurl, {
         method: 'POST',
-        // credentials: 'include',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',

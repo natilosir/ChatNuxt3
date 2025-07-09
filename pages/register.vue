@@ -59,7 +59,7 @@ const handleSubmit = async () => {
     });
 
     if ( response.user.hash ) {
-      setCookie('token', response.token, 365);
+      setCookie('token', response.access_token, 365);
       setCookie('hash', response.user.hash, 365);
 
       await Swal.fire({

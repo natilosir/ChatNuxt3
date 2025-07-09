@@ -13,7 +13,6 @@ export async function check() {
 
         if (response.user?.hash) {
             setCookie('hash', response.user.hash, 365);
-            token.value = response.token;
             return { isLoggedIn: true, user: response.user };
         }
 
