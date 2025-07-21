@@ -35,13 +35,14 @@ jobs:
         run: |
           npx cap sync android
           cd android
-          chmod +x gradlew  # این خط مشکل permission را حل می‌کند
-          ./gradlew wrapper --gradle-version 8.4  # اضافه کردن این خط
+          chmod +x gradlew 
+          ./gradlew wrapper --gradle-version 8.4 
 
       - name: Build APK
         run: |
-          cd android
-          ./gradlew assembleDebug -Dorg.gradle.java.home=$JAVA_HOME_17_X64
+           cd android
+          ./gradlew clean
+          ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
