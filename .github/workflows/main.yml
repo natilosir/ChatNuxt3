@@ -40,7 +40,7 @@ jobs:
 
       - name: Build APK
         run: |
-           cd android
+          cd android
           ./gradlew clean
           ./gradlew assembleDebug --stacktrace
 
