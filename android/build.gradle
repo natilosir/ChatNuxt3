@@ -1,5 +1,4 @@
 buildscript {
-    
     repositories {
         google()
         mavenCentral()
@@ -7,22 +6,9 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:8.1.2'
         classpath 'com.google.gms:google-services:4.4.2'
-
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20'
     }
 }
-
-android {
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-}
-
-kotlinOptions {
-    jvmTarget = "17"
-}
-
-apply from: "variables.gradle"
 
 allprojects {
     repositories {
@@ -34,3 +20,5 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+apply from: "variables.gradle"
