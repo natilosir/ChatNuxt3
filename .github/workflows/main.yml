@@ -10,43 +10,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
+      - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: |
-        npm install
-        npm install @capacitor/cli @capacitor/core @capacitor/android
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-    - name: Build Nuxt project
-      run: npm run generate
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install @capacitor/cli @capacitor/core @capacitor/android
 
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - name: Build Nuxt project
+        run: npm run generate
 
-    - name: Prepare Android
-      run: |
-        npx cap sync android
-        cd android
-        ./gradlew assembleDebug -Dorg.gradle.java.home=$JAVA_HOME_17_X64
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
+      - name: Prepare Android
+        run: |
+          npx cap sync android
+          cd android
+          chmod +x gradlew  # این خط مشکل permission را حل می‌کند
+          ./gradlew wrapper --gradle-version 8.4  # اضافه کردن این خط
 
-    - name: Build APK
+      - name: Build APK
+        run: |
+          cd android
+          ./gradlew assembleDebug -Dorg.gradle.java.home=$JAVA_HOME_17_X64
 
-      run: |
-        npx cap sync android
-        cd android
-        chmod +x gradlew
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-debug.apk
-        path: android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
