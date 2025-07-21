@@ -36,7 +36,7 @@ jobs:
           npx cap sync android
           cd android
           chmod +x gradlew 
-          ./gradlew wrapper --gradle-version 8.6
+          ./gradlew wrapper --gradle-version 8.7
 
       - name: Build APK
         run: |
