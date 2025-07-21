@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@capgo/capacitor-updater": "^7.7.7",
     "@nuxtjs/auth-next": "^5.0.0-1667386184.dfbbb54",
     "@popperjs/core": "^2.11.8",
     "@sidebase/nuxt-auth": "^1.0.0",
@@ -22,6 +23,9 @@
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
+    "@capacitor/android": "^7.4.2",
+    "@capacitor/cli": "^7.4.2",
+    "@capacitor/core": "^7.4.2",
     "@vite-pwa/nuxt": "^1.0.4"
   }
 }

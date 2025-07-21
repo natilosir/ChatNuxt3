@@ -23,6 +23,7 @@ watch(hashOpenChat, (newVal) => { hash.value = newVal }, { immediate: true });
 
 // MessageInput.vue
 const sendMessage = async () => {
+  textarea.value.focus();
   if ( !newMessage.value.trim() || isSending.value ) return;
 
   isSending.value   = true;

@@ -87,6 +87,7 @@
 }
 
 .chat-room.dark-theme .message-text {
+    direction: rtl;
     margin: 0;
     padding: 0;
     word-wrap: break-word;
