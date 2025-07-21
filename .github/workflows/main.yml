@@ -31,6 +31,9 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Verify Java Version
+        run: java -version
+
       - name: Prepare Android
         run: |
           npx cap sync android
