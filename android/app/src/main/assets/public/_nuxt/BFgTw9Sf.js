@@ -1,0 +1,1 @@
+import{u as r,p as o,s as n}from"./DSqpYqpb.js";import"./CI--yoU-.js";async function i(){var s;if(!r("token").value)return{isLoggedIn:!1,user:null};try{const e=await o("check");return(s=e.user)!=null&&s.hash?(n("hash",e.user.hash,365),{isLoggedIn:!0,user:e.user}):{isLoggedIn:!1,user:null}}catch{return{isLoggedIn:!1,user:null}}}export{i as c};
