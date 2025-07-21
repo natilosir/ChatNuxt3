@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "905697040963",
+    "project_id": "natilos-d6449",
+    "storage_bucket": "natilos-d6449.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:905697040963:android:0fde9b4cf0ca1e789bd2f6",
+        "android_client_info": {
+          "package_name": "ir.natilos.chat.ir"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA54CWR7U5wCA0xH7s9KwRMD33nv6kWSrk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
