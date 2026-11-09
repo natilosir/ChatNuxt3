@@ -1,32 +1,56 @@
 <template>
-  <div class="authentication-wrapper">
-    <!-- لوگو -->
-    <NuxtLink to="/" class="auth-logo">
-      <span style="color: #FF5555">چت‌لند</span>
+  <div class="authentication-wrapper" dir="rtl">
+    <NuxtLink to="/" class="auth-logo d-inline-flex align-items-center gap-2" aria-label="صفحه اصلی چت‌لند">
+      <span class="auth-logo-mark d-inline-flex align-items-center justify-content-center">
+        <i class="bi bi-chat-heart-fill" aria-hidden="true"></i>
+      </span>
+      <span>چت‌لند</span>
     </NuxtLink>
-    <!-- محتوای اصلی -->
-    <div class="auth-container">
-      <!-- تصویر و آمار (سمت چپ) -->
-      <div class="auth-illustration">
-        <img src="~/assets/img/illustrations/auth-login-illustration-dark.png" alt="تصویر چت" class="illustration-img"/>
-        <div class="stats">
-          <div class="stat-card">
-            <span class="stat-icon">📈</span>
-            <p>۲۴.۶ هزار <br/> کاربران جدید <br/> ۱۲٪ رشد</p>
-            <span class="stat-progress" style="background: conic-gradient(#00FF00 12%, #444 0deg)"></span>
+
+    <div class="auth-glow auth-glow-one" aria-hidden="true"></div>
+    <div class="auth-glow auth-glow-two" aria-hidden="true"></div>
+
+    <main class="auth-container container">
+      <section class="auth-showcase" aria-label="معرفی چت‌لند">
+        <span class="auth-showcase-kicker d-inline-flex align-items-center gap-2">
+          <i class="bi bi-stars" aria-hidden="true"></i>
+          فضای گفتگوی شما
+        </span>
+        <h1>گفتگوهایت را<br /><span>ادامه بده.</span></h1>
+        <p>به چت‌لند برگرد و مکالمه‌هایت را در یک فضای ساده و دلنشین دنبال کن.</p>
+
+        <div class="auth-chat-preview" aria-hidden="true">
+          <div class="preview-topbar d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+              <span class="preview-avatar">ر</span>
+              <span>
+                <strong class="d-block">گفتگوی دوستانه</strong>
+                <small>همیشه در دسترس</small>
+              </span>
+            </div>
+            <i class="bi bi-three-dots" aria-hidden="true"></i>
           </div>
-          <div class="stat-card">
-            <span class="stat-icon">🌐</span>
-            <p>۴۸.۲ هزار <br/> پیام‌های ارسالی <br/> +۲۲.۵٪</p>
+          <div class="preview-messages">
+            <span class="preview-bubble preview-bubble-received">سلام! حالت چطوره؟</span>
+            <span class="preview-bubble preview-bubble-sent">خوبم، ممنون ازت ✨</span>
+            <span class="preview-bubble preview-bubble-received">خوشحالم که برگشتی.</span>
+          </div>
+          <div class="preview-composer">
+            <span>پیام خود را بنویسید...</span>
+            <i class="bi bi-send-fill" aria-hidden="true"></i>
           </div>
         </div>
-        <div class="cube"></div>
-      </div>
-      <!-- فرم ثبت‌نام (سمت راست) -->
-      <slot />
-    </div>
+      </section>
+
+      <section class="auth-card">
+        <slot />
+      </section>
+    </main>
+
+    <footer class="auth-page-footer">چت‌لند · گفتگو، ساده‌تر از همیشه</footer>
   </div>
 </template>
+
 <style>
-@import "@/assets/css/auth-style.css";
+@import "@/assets/css/auth/auth-style.css";
 </style>

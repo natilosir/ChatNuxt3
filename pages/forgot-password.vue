@@ -22,10 +22,11 @@
 </template>
 
 <script lang="ts" setup>
-import { post } from '~/composables/post';
+import { post } from '~/composables/api/post.ts';
 import { ref } from 'vue';
-import { setPageLayout, useRouter } from '#app';
 import Swal from 'sweetalert2';
+
+definePageMeta({ layout: 'login', middleware: 'guest' });
 
 const router = useRouter();
 const loading = ref(false);
@@ -36,7 +37,6 @@ const form = ref({
 useHead({
   title: 'فراموشی کلمه عبور'
 })
-setPageLayout('login');
 
 const showErrorMessages = (errorData: Record<string, string[]>) => {
   const errorMessages = Object.values(errorData).flat();

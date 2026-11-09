@@ -1,0 +1,101 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  color: var(--chat-text);
+  background: var(--chat-bg-deep);
+}
+
+.main-content {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex: 1 1 auto;
+  direction: ltr;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 14px;
+  overflow: hidden;
+  background-color: #171024;
+}
+
+.main-content::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset: -4px;
+  pointer-events: none;
+  background-image:
+    linear-gradient(125deg, rgba(18, 8, 32, 0.64), rgba(29, 13, 53, 0.56)),
+    url('https://dl.natilos.ir/ffff/bg8.jpg');
+  background-position: center center;
+  background-size: cover;
+  background-attachment: fixed;
+  filter: blur(var(--chat-glass-blur));
+}
+
+.chat-view {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  direction: rtl;
+  border: 1px solid var(--chat-border);
+  border-radius: var(--chat-radius-xl);
+  background: rgba(21, 12, 39, var(--chat-glass-opacity));
+  box-shadow: var(--chat-shadow);
+  -webkit-backdrop-filter: blur(var(--chat-glass-blur));
+  backdrop-filter: blur(var(--chat-glass-blur));
+}
+
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  opacity: 0;
+  transform: translateX(18px);
+}
+
+@media (max-width: 767.98px) {
+  .app-container {
+    height: 100dvh;
+    min-height: 100svh;
+  }
+
+  .main-content {
+    gap: 0;
+    padding: 8px;
+    background-position: center top;
+  }
+
+  .main-content::before {
+    background-position: center top;
+    background-attachment: scroll;
+  }
+
+  .chat-view {
+    width: 100%;
+    min-width: 0;
+    border-radius: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-fade-enter-active,
+  .slide-fade-leave-active {
+    transition-duration: 0.01ms;
+  }
+}

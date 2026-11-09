@@ -1,0 +1,152 @@
+.message-modal-backdrop {
+  position: fixed;
+  z-index: 1090;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(7, 3, 16, 0.72);
+  -webkit-backdrop-filter: blur(var(--chat-glass-blur));
+  backdrop-filter: blur(var(--chat-glass-blur));
+}
+
+.message-modal {
+  width: min(100%, 520px);
+  border: 1px solid var(--chat-border) !important;
+  border-radius: 22px;
+  color: var(--chat-text);
+  background: rgba(31, 16, 51, 0.97);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+}
+
+.message-modal h2 {
+  color: #fff;
+  font-weight: 800;
+}
+
+.modal-close-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  color: var(--chat-muted);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.modal-close-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.message-edit-field {
+  min-height: 120px;
+  resize: vertical;
+  border: 1px solid var(--chat-border);
+  border-radius: 13px;
+  color: #fff;
+  background: rgba(10, 5, 20, 0.38);
+  line-height: 1.8;
+}
+
+.message-edit-field:focus {
+  border-color: var(--chat-primary-soft);
+  color: #fff;
+  background: rgba(10, 5, 20, 0.48);
+  box-shadow: 0 0 0 3px rgba(155, 77, 255, 0.14);
+}
+
+.message-edit-field::placeholder {
+  color: var(--chat-muted);
+}
+
+.save-message-btn {
+  border: 0;
+  border-radius: 11px;
+  background: linear-gradient(145deg, #b36aff, #7a29d7);
+}
+
+.message-modal-backdrop {
+  align-items: flex-end;
+  padding: 18px 18px 0;
+}
+
+.message-modal {
+  width: min(100%, 620px);
+  margin: 0 auto;
+  border-radius: 22px 22px 0 0;
+  transform-origin: bottom center;
+}
+
+.message-modal-handle {
+  width: 42px;
+  height: 4px;
+  margin: 10px auto 0;
+  border-radius: 99px;
+  background: rgba(245, 232, 255, 0.35);
+}
+
+.message-modal-kicker {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--chat-primary-soft);
+  font-size: 0.68rem;
+}
+
+.message-edit-hint {
+  color: var(--chat-muted);
+  font-size: 0.65rem;
+}
+
+.message-sheet-enter-active,
+.message-sheet-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.message-sheet-enter-active .message-modal,
+.message-sheet-leave-active .message-modal {
+  transition: transform 0.28s cubic-bezier(0.2, 0.75, 0.25, 1), opacity 0.2s ease;
+}
+
+.message-sheet-enter-from,
+.message-sheet-leave-to {
+  opacity: 0;
+}
+
+.message-sheet-enter-from .message-modal,
+.message-sheet-leave-to .message-modal {
+  opacity: 0.7;
+  transform: translateY(100%);
+}
+
+@media (max-width: 575.98px) {
+  .message-modal-backdrop {
+    padding: 12px 0 0;
+  }
+
+  .message-modal {
+    width: 100%;
+    border-radius: 22px 22px 0 0;
+  }
+
+  .message-modal .card-body {
+    padding: 20px 16px calc(18px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .message-edit-hint {
+    display: none;
+  }
+
+  .message-modal .btn {
+    min-height: 40px;
+    font-size: 0.78rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .message-sheet-enter-active,
+  .message-sheet-leave-active,
+  .message-sheet-enter-active .message-modal,
+  .message-sheet-leave-active .message-modal {
+    transition-duration: 0.01ms;
+  }
+}

@@ -1,0 +1,87 @@
+/* Legacy five-orbit loader, restored for both chat history and chat list. */
+.chat-loading {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 130px;
+  align-items: center;
+  justify-content: center;
+  color: #e8d5f5;
+}
+
+.chat-loading--overlay {
+  position: absolute;
+  z-index: 4;
+  inset: 74px 0 82px;
+  background: rgba(18, 9, 33, 0.08);
+  pointer-events: none;
+}
+
+.chat-loading .load {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  margin: auto;
+}
+
+.chat-loading .circle {
+  position: absolute;
+  inset: 0;
+  height: 130px;
+  opacity: 0;
+  transform: rotate(0deg);
+  animation: chat-orbit 4.3s infinite;
+}
+
+.chat-loading .circle::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #d5b9cd;
+  box-shadow: 0 0 12px #fff;
+}
+
+.chat-loading .circle:nth-child(2) { animation-delay: 240ms; }
+.chat-loading .circle:nth-child(3) { animation-delay: 480ms; }
+.chat-loading .circle:nth-child(4) { animation-delay: 720ms; }
+.chat-loading .circle:nth-child(5) { animation-delay: 960ms; }
+
+@keyframes chat-orbit {
+  0% {
+    transform: rotate(225deg);
+    opacity: 1;
+    animation-timing-function: ease-out;
+  }
+  7% {
+    transform: rotate(345deg);
+    animation-timing-function: linear;
+  }
+  30% {
+    transform: rotate(455deg);
+    animation-timing-function: ease-in-out;
+  }
+  39% {
+    transform: rotate(690deg);
+    animation-timing-function: linear;
+  }
+  70% {
+    transform: rotate(815deg);
+    opacity: 1;
+    animation-timing-function: ease-out;
+  }
+  75% { transform: rotate(945deg); }
+  76%, 100% {
+    transform: rotate(945deg);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-loading .circle {
+    animation-duration: 8s;
+  }
+}

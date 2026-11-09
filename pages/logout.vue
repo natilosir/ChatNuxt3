@@ -1,24 +1,28 @@
 <script setup>
-import { setPageLayout, useRouter } from '#app';
-import { deleteCookie, post } from '~/composables/post.js';
+import { deleteCookie, post } from '~/composables/api/post.ts';
+import { updateAuthSnapshot, createUncheckedAuthSnapshot } from '~/utils/auth/authState.js';
 
-const router = useRouter();
-setPageLayout('login');
+definePageMeta({ layout: 'login' });
+
+const routeAuthState = useState('chatland:auth-state', createUncheckedAuthSnapshot);
 
 useHead({
-  title: 'Logging out'
-})
+  title: 'خروج از حساب'
+});
 
 onMounted(async () => {
-  const response = await post('logout');
   try {
-    if ( response.status === true ) {
-      deleteCookie('hash')
-      deleteCookie('token')
-      await navigateTo('/login');
-    }
-  } catch ( e ) {
-    await navigateTo('/');
+    await post('logout');
+    deleteCookie('hash');
+    deleteCookie('token');
+    updateAuthSnapshot(routeAuthState, null);
+    await navigateTo('/login');
+  } catch (error) {
+    console.error('Logout request failed:', error);
+    deleteCookie('hash');
+    deleteCookie('token');
+    updateAuthSnapshot(routeAuthState, null);
+    await navigateTo('/login');
   }
 });
 </script>

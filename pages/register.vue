@@ -26,12 +26,15 @@
   </div>
 </template>
 <script setup>
-import { post } from '~/composables/post.ts';
+import { post, setCookie } from '~/composables/api/post.ts';
+import { updateAuthSnapshot, createUncheckedAuthSnapshot } from '~/utils/auth/authState.js';
 import { ref } from 'vue';
-import { setPageLayout, useRouter } from '#app';
 import Swal from 'sweetalert2';
 
+definePageMeta({ layout: 'login', middleware: 'guest' });
+
 const router  = useRouter();
+const routeAuthState = useState('chatland:auth-state', createUncheckedAuthSnapshot);
 const loading = ref(false);
 const form    = ref({
   name: '',
@@ -45,7 +48,6 @@ useHead({
   title: 'ثبت نلم در چت‌لند'
 })
 
-setPageLayout('login');
 
 const handleSubmit = async () => {
   loading.value = true;
@@ -61,6 +63,7 @@ const handleSubmit = async () => {
     if ( response.user.hash ) {
       setCookie('token', response.access_token, 365);
       setCookie('hash', response.user.hash, 365);
+      updateAuthSnapshot(routeAuthState, response.user);
 
       await Swal.fire({
         title: 'ثبت نام موفق',

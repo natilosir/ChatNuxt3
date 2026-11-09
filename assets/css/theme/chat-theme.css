@@ -1,0 +1,103 @@
+@font-face {
+  font-family: 'IRANSans';
+  src: url('~/assets/fonts/litle.ttf') format('truetype');
+  font-display: swap;
+}
+
+:root {
+  --chat-primary-strong: #7d2be8;
+  --chat-primary-soft: #c9a2ff;
+  --chat-bg-deep: #12091f;
+  --chat-border: rgba(226, 205, 255, 0.16);
+  --chat-text: #fbf8ff;
+  --chat-muted: rgba(239, 229, 255, 0.68);
+  --chat-shadow: 0 18px 48px rgba(7, 3, 18, 0.28);
+  --chat-radius-xl: 24px;
+  --chat-glass-blur: 2px;
+  --chat-glass-opacity: 0.6;
+  --chat-scrollbar-track: rgba(25, 12, 42, 0.56);
+  --chat-scrollbar-thumb: rgba(166, 112, 222, 0.06);
+  --chat-scrollbar-thumb-hover: rgba(198, 151, 247, 0.9);
+}
+
+html,
+body,
+#__nuxt {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--chat-bg-deep);
+  color: var(--chat-text);
+  font-family: 'IRANSans', Tahoma, sans-serif;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--chat-primary-soft);
+  outline-offset: 3px;
+}
+
+.min-w-0 {
+  min-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* Thin violet scrollbars that follow the glassmorphism palette. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--chat-scrollbar-thumb) var(--chat-scrollbar-track);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--chat-scrollbar-thumb) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+*::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: var(--chat-scrollbar-track);
+}
+
+*::-webkit-scrollbar-thumb {
+  min-height: 28px;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: var(--chat-scrollbar-thumb);
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--chat-scrollbar-thumb-hover);
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
